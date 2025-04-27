@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Trials - Failure</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .failure-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .failure-title {
+            font-size: 36px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #f00;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+            animation: glitch 1s infinite;
+        }
+        
+        @keyframes glitch {
+            0% { text-shadow: 0 0 10px rgba(255, 0, 0, 0.7); }
+            25% { text-shadow: 5px 5px 10px rgba(255, 0, 0, 0.7); }
+            50% { text-shadow: -5px -5px 10px rgba(255, 0, 0, 0.7); }
+            75% { text-shadow: 5px -5px 10px rgba(255, 0, 0, 0.7); }
+            100% { text-shadow: 0 0 10px rgba(255, 0, 0, 0.7); }
+        }
+        
+        .failure-text {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .restart-btn {
+            display: block;
+            width: 200px;
+            margin: 40px auto;
+            padding: 15px;
+            background-color: #900;
+            color: white;
+            text-align: center;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .restart-btn:hover {
+            background-color: #c00;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="game-title">SCHOOL TRIALS</h1>
+        
+        <div class="failure-container">
+            <h2 class="failure-title">ELIMINATION</h2>
+            
+            <p class="failure-text">
+                The buzzer sounds. Your time has run out. The trial is over, and you have failed.
+            </p>
+            
+            <p class="failure-text">
+                "Student eliminated," announces the cold, mechanical voice over the intercom.
+            </p>
+            
+            <p class="failure-text">
+                The other students look away as the floor beneath you opens up. You fall into darkness,
+                the screams of the remaining students fading above you.
+            </p>
+            
+            <p class="failure-text">
+                As you fall, you wonder what will happen to the others. Will any of them survive the School Trials?
+            </p>
+            
+            <p class="failure-text">
+                The darkness envelops you completely. This is the end of your journey.
+            </p>
+            
+            <button class="restart-btn" onclick="location.href='index.html'">TRY AGAIN</button>
+        </div>
+    </div>
+    
+    <audio id="background-music" loop>
+        <source src="music/tension-theme.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Play background music
+            const backgroundMusic = document.getElementById('background-music');
+            backgroundMusic.volume = 0.3;
+            backgroundMusic.play().catch(e => console.log("Audio autoplay was prevented:", e));
+            
+            // Add sound toggle
+            const soundToggle = document.createElement('div');
+            soundToggle.className = 'sound-toggle';
+            soundToggle.innerHTML = '🔊';
+            soundToggle.style.position = 'fixed';
+            soundToggle.style.top = '20px';
+            soundToggle.style.right = '20px';
+            soundToggle.style.fontSize = '24px';
+            soundToggle.style.cursor = 'pointer';
+            soundToggle.style.zIndex = '1000';
+            document.body.appendChild(soundToggle);
+            
+            let soundOn = true;
+            soundToggle.addEventListener('click', function() {
+                soundOn = !soundOn;
+                if (soundOn) {
+                    backgroundMusic.play();
+                    soundToggle.innerHTML = '🔊';
+                } else {
+                    backgroundMusic.pause();
+                    soundToggle.innerHTML = '🔇';
+                }
+            });
+            
+            // Reset game state for new game
+            localStorage.removeItem('gameState');
+        });
+    </script>
+</body>
+</html>

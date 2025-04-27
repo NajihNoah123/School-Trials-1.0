@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 7: The Mirror Maze - SCHOOL TRIALS</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .maze-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background-color: #111;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+        
+        .maze-grid {
+            display: grid;
+            width: 100%;
+            height: 100%;
+            gap: 1px;
+        }
+        
+        .maze-cell {
+            background-color: #222;
+            position: relative;
+            transition: background-color 0.2s;
+        }
+        
+        .maze-wall {
+            background-color: #444;
+            border: 1px solid #555;
+        }
+        
+        .maze-path {
+            background-color: #222;
+        }
+        
+        .maze-start {
+            background-color: #00a;
+        }
+        
+        .maze-exit {
+            background-color: #0a0;
+        }
+        
+        .maze-mirror {
+            background-color: rgba(100, 200, 255, 0.3);
+            border: 1px solid rgba(100, 200, 255, 0.5);
+        }
+        
+        .maze-trap {
+            background-color: #222;
+            /* Traps are hidden until triggered */
+        }
+        
+        .maze-trap.revealed {
+            background-color: #a00;
+        }
+        
+        .maze-reflection {
+            background-color: rgba(100, 100, 255, 0.1);
+        }
+        
+        .maze-player {
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            background-color: #f00;
+            border-radius: 50%;
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+        }
+        
+        .player-reflection {
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            background-color: rgba(255, 0, 0, 0.5);
+            border-radius: 50%;
+            z-index: 5;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+        
+        .mobile-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 200px;
+            margin: 20px auto;
+        }
+        
+        .control-btn {
+            padding: 15px;
+            background-color: #333;
+            border: 1px solid #555;
+            color: white;
+            text-align: center;
+            font-size: 20px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .control-btn:active {
+            background-color: #555;
+        }
+        
+        .mirror-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(100, 200, 255, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 20;
+        }
+        
+        .mirror-effect.active {
+            opacity: 1;
+        }
+        
+        .vote-activity {
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid #333;
+            margin-bottom: 10px;
+        }
+        
+        .hint-active {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 255, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); }
+        }
+        
+        .maze-visited {
+            background-color: #333;
+        }
+    </style>
+</head>
+<body class="bg-black text-white font-mono">
+    <div class="container mx-auto px-4 py-8 min-h-screen">
+        <h1 class="text-4xl font-bold mb-8 text-center glitch-text">CHAPTER 7: THE MIRROR MAZE</h1>
+        
+        <section id="story" class="story-section mb-12">
+            <div class="story-text max-w-3xl mx-auto">
+                <p>The 20 remaining students were led through a series of winding corridors, each one darker than the last. The air grew colder, and a strange mist began to form around their ankles.</p>
+                
+                <p>"Where are they taking us?" whispered Yash, his breath visible in the cold air.</p>
+                
+                <p>"I don't know," replied Najih, "but I don't like it."</p>
+                
+                <p>Finally, they arrived at a massive chamber. The walls, floor, and ceiling were covered in mirrors—hundreds of them, of all shapes and sizes. Each mirror reflected the students, but something was wrong with the reflections. They moved a fraction of a second too late. Their expressions didn't quite match.</p>
+                
+                <p>The mechanical voice echoed throughout the chamber, seeming to come from every direction at once as it bounced off the mirrored surfaces.</p>
+                
+                <p><strong>TRIAL SEVEN: THE MIRROR MAZE</strong></p>
+                
+                <p>"Beyond this chamber lies a labyrinth of mirrors. You must navigate through it to find the exit. But beware—not all reflections are what they seem. Some mirrors show the truth. Others show lies. And some... show what's hunting you."</p>
+                
+                <p>A chill ran down your spine as you looked at your reflection. For just a moment, you could have sworn it smiled at you when you weren't smiling.</p>
+                
+                <p>"You have three minutes to find the exit. Those who remain in the maze when time expires will be eliminated."</p>
+                
+                <p>The floor beneath the students suddenly tilted, sending them sliding forward into the maze of mirrors.</p>
+            </div>
+            <div class="text-center mt-8">
+                <button id="continue-to-trial" class="game-btn px-8 py-3 text-xl bg-red-900 hover:bg-red-700 transition-colors duration-300 rounded-sm">ENTER THE MAZE</button>
+            </div>
+        </section>
+        
+        <div id="trial-section" class="hidden">
+            <div class="survivor-count text-center mb-6" id="survivor-count">20 students remain</div>
+            
+            <div class="trial-container screen-flicker">
+                <div class="trial-title">TRIAL SEVEN: THE MIRROR MAZE</div>
+                
+                <div class="trial-description mb-8">
+                    <p>Navigate through the shifting maze of mirrors to find the exit.</p>
+                    <p>Use the arrow keys or on-screen controls to move.</p>
+                    <p>Beware of false paths and hidden traps.</p>
+                    <p>Find the exit before time runs out.</p>
+                </div>
+                
+                <div class="timer text-center mb-4 text-2xl" id="timer">03:00</div>
+                
+                <div id="message-display" class="text-center mb-4 text-yellow-400 hidden"></div>
+                
+                <div id="maze-container" class="maze-container mb-4">
+                    <div id="mirror-effect" class="mirror-effect"></div>
+                    <div id="maze-grid" class="maze-grid"></div>
+                </div>
+                
+                <div class="flex justify-between items-center mb-4">
+                    <div class="text-sm text-gray-400">Exits Found: <span id="exits-found">0</span>/10</div>
+                    <button id="hint-button" class="px-3 py-1 bg-yellow-900 hover:bg-yellow-800 text-white rounded-sm">Show Hint (5s)</button>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4 text-sm">
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 bg-blue-900 mr-2"></div>
+                        <span>Start</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 bg-green-900 mr-2"></div>
+                        <span>Exit</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 bg-cyan-900 opacity-50 mr-2"></div>
+                        <span>Mirror</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 bg-red-600 mr-2 rounded-full"></div>
+                        <span>You</span>
+                    </div>
+                </div>
+                
+                <div class="text-center mb-4">
+                    <button id="start-trial" class="game-btn px-8 py-3 text-xl bg-red-900 hover:bg-red-700 transition-colors duration-300 rounded-sm">START TRIAL</button>
+                </div>
+                
+                <!-- Mobile controls -->
+                <div class="mobile-controls mt-4 hidden" id="mobile-controls">
+                    <div></div>
+                    <div class="control-btn" id="up-btn">↑</div>
+                    <div></div>
+                    <div class="control-btn" id="left-btn">←</div>
+                    <div class="control-btn" id="down-btn">↓</div>
+                    <div class="control-btn" id="right-btn">→</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="fixed bottom-4 right-4 flex space-x-4">
+            <button id="sound-toggle" class="px-3 py-1 bg-gray-800 rounded-sm">🔊</button>
+            <button id="music-toggle" class="px-3 py-1 bg-gray-800 rounded-sm">♪ ON</button>
+        </div>
+    </div>
+    
+    <script src="scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load game state
+            loadGameState();
+            gameState.survivorCount = 20; // Set for this chapter
+            updateSurvivorCount();
+            
+            // Play ambient music
+            playMusic('sounds/tension_theme.mp3');
+            
+            // Continue to trial button
+            document.getElementById('continue-to-trial').addEventListener('click', function() {
+                playSound('sounds/click.mp3');
+                document.getElementById('story').classList.add('hidden');
+                document.getElementById('trial-section').classList.remove('hidden');
+            });
+            
+            // Trial elements
+            const startButton = document.getElementById('start-trial');
+            const mazeContainer = document.getElementById('maze-container');
+            const mazeGrid = document.getElementById('maze-grid');
+            const mobileControls = document.getElementById('mobile-controls');
+            const mirrorEffect = document.getElementById('mirror-effect');
+            const messageDisplay = document.getElementById('message-display');
+            const hintButton = document.getElementById('hint-button');
+            const exitsFoundDisplay = document.getElementById('exits-found');
+            
+            // Maze configuration
+            const mazeWidth = 12;
+            const mazeHeight = 12;
+            let maze = [];
+            let playerPosition = { x: 0, y: 0 };
+            let exitPosition = { x: 0, y: 0 };
+            let isGameOver = false;
+            let isHintActive = false;
+            let hintTimer = null;
+            let exitsFound = 0;
+            const totalExits = 10;
+            
+            // Cell types
+            const CELL_TYPES = {
+                WALL: 'wall',
+                PATH: 'path',
+                START: 'start',
+                EXIT: 'exit',
+                MIRROR: 'mirror',
+                TRAP: 'trap',
+                REFLECTION: 'reflection',
+                VISITED: 'visited'
+            };
+            
+            // Generate maze
+            function generateMaze() {
+                maze = [];
+                
+                // Initialize with walls
+                for (let y = 0; y < mazeHeight; y++) {
+                    const row = [];
+                    for (let x = 0; x < mazeWidth; x++) {
+                        row.push(CELL_TYPES.WALL);
+                    }
+                    maze.push(row);
+                }
+                
+                // Set start position (bottom center)
+                const startX = Math.floor(mazeWidth / 2);
+                const startY = mazeHeight - 1;
+                maze[startY][startX] = CELL_TYPES.START;
+                playerPosition = { x: startX, y: startY };
+                
+                // Set exit position (top row, random x)
+                exitPosition = { 
+                    x: Math.floor(Math.random() * (mazeWidth - 2)) + 1, 
+                    y: 0 
+                };
+                maze[exitPosition.y][exitPosition.x] = CELL_TYPES.EXIT;
+                
+                // Create a path from start to exit
+                createPath(startX, startY, exitPosition.x, exitPosition.y);
+                
+                // Add mirrors
+                addSpecialCells(CELL_TYPES.MIRROR, Math.floor(mazeWidth * mazeHeight * 0.1));
+                
+                // Add reflections (false paths)
+                addSpecialCells(CELL_TYPES.REFLECTION, Math.floor(mazeWidth * mazeHeight * 0.15));
+                
+                // Add traps
+                addSpecialCells(CELL_TYPES.TRAP, Math.floor(mazeWidth * mazeHeight * 0.05));
+            }
+            
+            // Create a guaranteed path from start to exit
+            function createPath(startX, startY, exitX, exitY) {
+                let currentX = startX;
+                let currentY = startY;
+                
+                while (currentY > exitY) {
+                    // Decide direction: up, left, or right
+                    const directions = [];
+                    
+                    // Always consider moving up
+                    directions.push('up');
+                    
+                    // Consider left and right if not at edges
+                    if (currentX > 1) directions.push('left');
+                    if (currentX < mazeWidth - 2) directions.push('right');
+                    
+                    // Choose a random direction
+                    const direction = directions[Math.floor(Math.random() * directions.length)];
+                    
+                    switch (direction) {
+                        case 'up':
+                            currentY--;
+                            break;
+                        case 'left':
+                            currentX--;
+                            break;
+                        case 'right':
+                            currentX++;
+                            break;
+                    }
+                    
+                    // Mark the new position as path
+                    if (!(currentY === exitY && currentX === exitX)) {
+                        maze[currentY][currentX] = CELL_TYPES.PATH;
+                    }
+                }
+            }
+            
+            // Add special cells (mirrors, reflections, traps)
+            function addSpecialCells(cellType, count) {
+                for (let i = 0; i < count; i++) {
+                    const x = Math.floor(Math.random() * (mazeWidth - 2)) + 1;
+                    const y = Math.floor(Math.random() * (mazeHeight - 2)) + 1;
+                    
+                    // Don't place on start, exit, or existing path
+                    if (maze[y][x] === CELL_TYPES.WALL && 
+                        !(y === playerPosition.y && x === playerPosition.x) && 
+                        !(y === exitPosition.y && x === exitPosition.x)) {
+                        maze[y][x] = cellType;
+                    }
+                }
+            }
+            
+            // Render maze
+            function renderMaze() {
+                mazeGrid.innerHTML = '';
+                mazeGrid.style.gridTemplateColumns = `repeat(${mazeWidth}, 1fr)`;
+                mazeGrid.style.gridTemplateRows = `repeat(${mazeHeight}, 1fr)`;
+                
+                for (let y = 0; y < mazeHeight; y++) {
+                    for (let x = 0; x < mazeWidth; x++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'maze-cell';
+                        
+                        // Add appropriate class based on cell type
+                        switch (maze[y][x]) {
+                            case CELL_TYPES.WALL:
+                                cell.classList.add('maze-wall');
+                                break;
+                            case CELL_TYPES.PATH:
+                                cell.classList.add('maze-path');
+                                break;
+                            case CELL_TYPES.START:
+                                cell.classList.add('maze-start');
+                                break;
+                            case CELL_TYPES.EXIT:
+                                cell.classList.add('maze-exit');
+                                break;
+                            case CELL_TYPES.MIRROR:
+                                cell.classList.add('maze-mirror');
+                                break;
+                            case CELL_TYPES.TRAP:
+                                cell.classList.add('maze-trap');
+                                if (isHintActive) {
+                                    cell.classList.add('revealed');
+                                }
+                                break;
+                            case CELL_TYPES.REFLECTION:
+                                cell.classList.add('maze-reflection');
+                                break;
+                            case CELL_TYPES.VISITED:
+                                cell.classList.add('maze-visited');
+                                break;
+                        }
+                        
+                        // Add player if this is the player's position
+                        if (x === playerPosition.x && y === playerPosition.y) {
+                            const player = document.createElement('div');
+                            player.className = 'maze-player';
+                            cell.appendChild(player);
+                        }
+                        
+                        // Add reflections if near mirrors
+                        if (isNearMirror(x, y) && !(x === playerPosition.x && y === playerPosition.y)) {
+                            const reflection = document.createElement('div');
+                            reflection.className = 'player-reflection';
+                            cell.appendChild(reflection);
+                        }
+                        
+                        mazeGrid.appendChild(cell);
+                    }
+                }
+            }
+            
+            // Check if a cell is near a mirror
+            function isNearMirror(x, y) {
+                // Check if this is a reflection position
+                for (let dy = -2; dy <= 2; dy++) {
+                    for (let dx = -2; dx <= 2; dx++) {
+                        const checkY = playerPosition.y + dy;
+                        const checkX = playerPosition.x + dx;
+                        
+                        // Check if there's a mirror between player and this position
+                        if (checkY >= 0 && checkY < mazeHeight && checkX >= 0 && checkX < mazeWidth) {
+                            if (maze[checkY][checkX] === CELL_TYPES.MIRROR) {
+                                // Simple reflection logic - reflect across the mirror
+                                const mirrorDx = checkX - playerPosition.x;
+                                const mirrorDy = checkY - playerPosition.y;
+                                
+                                const reflectionX = checkX + mirrorDx;
+                                const reflectionY = checkY + mirrorDy;
+                                
+                                if (reflectionX === x && reflectionY === y) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+            
+            // Move player
+            function movePlayer(dx, dy) {
+                if (isGameOver) return;
+                
+                const newX = playerPosition.x + dx;
+                const newY = playerPosition.y + dy;
+                
+                // Check if new position is valid
+                if (newX >= 0 && newX < mazeWidth && newY >= 0 && newY < mazeHeight) {
+                    const cellType = maze[newY][newX];
+                    
+                    if (cellType === CELL_TYPES.WALL) {
+                        // Can't move into walls
+                        return;
+                    }
+                    
+                    // Play movement sound
+                    playSound('sounds/click.mp3');
+                    
+                    // Update player position
+                    playerPosition = { x: newX, y: newY };
+                    
+                    // Check for special cells
+                    handleSpecialCell(cellType);
+                    
+                    // Mark as visited if it's a path
+                    if (cellType === CELL_TYPES.PATH || cellType === CELL_TYPES.REFLECTION) {
+                        maze[newY][newX] = CELL_TYPES.VISITED;
+                    }
+                    
+                    // Render the updated maze
+                    renderMaze();
+                }
+            }
+            
+            // Handle special cell effects
+            function handleSpecialCell(cellType) {
+                switch (cellType) {
+                    case CELL_TYPES.EXIT:
+                        // Found the exit!
+                        exitsFound++;
+                        exitsFoundDisplay.textContent = exitsFound;
+                        
+                        if (exitsFound >= totalExits) {
+                            // All exits found, complete the trial
+                            completeTrial();
+                        } else {
+                            // Generate a new maze for the next exit
+                            showMessage(`Exit found! ${totalExits - exitsFound} more to go.`);
+                            playSound('sounds/success.mp3');
+                            
+                            // Generate a new maze
+                            setTimeout(() => {
+                                generateMaze();
+                                renderMaze();
+                            }, 1500);
+                        }
+                        break;
+                        
+                    case CELL_TYPES.TRAP:
+                        // Stepped on a trap!
+                        showMessage("You fell into a trap!");
+                        playSound('sounds/failure.mp3');
+                        
+                        // Game over
+                        isGameOver = true;
+                        setTimeout(() => {
+                            gameOver("You fell into a trap in the mirror maze.");
+                        }, 1500);
+                        break;
+                        
+                    case CELL_TYPES.MIRROR:
+                        // Mirror effect
+                        showMessage("You see reflections all around you!");
+                        activateMirrorEffect();
+                        break;
+                        
+                    case CELL_TYPES.REFLECTION:
+                        // Reflection effect
+                        showMessage("This path is just a reflection!");
+                        break;
+                }
+            }
+            
+            // Show a message
+            function showMessage(text) {
+                messageDisplay.textContent = text;
+                messageDisplay.classList.remove('hidden');
+                
+                // Clear message after a delay
+                setTimeout(() => {
+                    messageDisplay.classList.add('hidden');
+                }, 3000);
+            }
+            
+            // Activate mirror effect
+            function activateMirrorEffect() {
+                mirrorEffect.classList.add('active');
+                
+                // Deactivate after a delay
+                setTimeout(() => {
+                    mirrorEffect.classList.remove('active');
+                }, 2000);
+            }
+            
+            // Show hint
+            function showHint() {
+                if (isHintActive) return;
+                
+                isHintActive = true;
+                hintButton.textContent = 'Hint Active...';
+                hintButton.disabled = true;
+                hintButton.classList.add('cursor-not-allowed', 'opacity-50');
+                
+                // Render maze with hints
+                renderMaze();
+                
+                // Set timer to hide hint
+                hintTimer = setTimeout(() => {
+                    isHintActive = false;
+                    hintButton.textContent = 'Show Hint (5s)';
+                    hintButton.disabled = false;
+                    hintButton.classList.remove('cursor-not-allowed', 'opacity-50');
+                    renderMaze();
+                }, 5000);
+            }
+            
+            // Complete the trial
+            function completeTrial() {
+                // Stop timer
+                stopTimer();
+                
+                // Play success sound
+                playSound('sounds/success.mp3');
+                
+                showMessage("All exits found! Trial complete!");
+                
+                // Calculate elimination
+                const eliminationRate = 0.5; // 50% elimination
+                const eliminated = Math.floor(gameState.survivorCount * eliminationRate);
+                const remaining = gameState.survivorCount - eliminated;
+                
+                // Proceed to next chapter
+                setTimeout(() => {
+                    trialSuccess(remaining, 'chaptereight.html');
+                }, 2000);
+            }
+            
+            // Start the trial
+            startButton.addEventListener('click', function() {
+                playSound('sounds/click.mp3');
+                startButton.classList.add('hidden');
+                mobileControls.classList.remove('hidden');
+                
+                // Switch to trial music
+                playMusic('sounds/trial_theme.mp3');
+                
+                // Generate and render maze
+                generateMaze();
+                renderMaze();
+                
+                // Start timer (3 minutes)
+                startTimer(3 * 60, function() {
+                    // Time's up
+                    gameOver('You got lost in the mirror maze and couldn\'t find the exit in time.');
+                });
+            });
+            
+            // Hint button
+            hintButton.addEventListener('click', showHint);
+            
+            // Handle keyboard controls
+            document.addEventListener('keydown', function(event) {
+                if (startButton.classList.contains('hidden') && !isGameOver) {
+                    switch (event.key) {
+                        case 'ArrowUp':
+                            movePlayer(0, -1);
+                            break;
+                        case 'ArrowDown':
+                            movePlayer(0, 1);
+                            break;
+                        case 'ArrowLeft':
+                            movePlayer(-1, 0);
+                            break;
+                        case 'ArrowRight':
+                            movePlayer(1, 0);
+                            break;
+                    }
+                }
+            });
+            
+            // Handle mobile controls
+            document.getElementById('up-btn').addEventListener('click', () => movePlayer(0, -1));
+            document.getElementById('down-btn').addEventListener('click', () => movePlayer(0, 1));
+            document.getElementById('left-btn').addEventListener('click', () => movePlayer(-1, 0));
+            document.getElementById('right-btn').addEventListener('click', () => movePlayer(1, 0));
+            
+            // Check if device is mobile
+            function isMobile() {
+                return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            }
+            
+            // Show mobile controls if on mobile device
+            if (isMobile()) {
+                mobileControls.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Trials - Chapter 3: Memory Match</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .trial-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 128, 0, 0.5);
+        }
+        
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .memory-card {
+            aspect-ratio: 1;
+            background-color: #22c55e;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s, background-color 0.3s;
+            transform-style: preserve-3d;
+        }
+        
+        .memory-card.flipped {
+            transform: rotateY(180deg);
+            background-color: #1e3a8a;
+        }
+        
+        .memory-card.matched {
+            background-color: #4ade80;
+            opacity: 0.7;
+            cursor: default;
+        }
+        
+        .card-content {
+            display: none;
+            font-size: 2rem;
+            color: white;
+            transform: rotateY(180deg);
+        }
+        
+        .memory-card.flipped .card-content {
+            display: block;
+        }
+        
+        .timer {
+            font-size: 1.5rem;
+            text-align: right;
+            margin-bottom: 10px;
+            color: #22c55e;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #22c55e;
+            width: 0%;
+            transition: width 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SCHOOL TRIALS</h1>
+        </header>
+        
+        <main>
+            <section id="story" class="story-section">
+                <h2>Chapter 3: Memory Match</h2>
+                <div class="story-text">
+                    <p>That night—or what they assumed was night—was silent. No alarms. No guards. Just the quiet breathing of 142 boys trying to make sense of something no one had ever prepared them for.</p>
+                    <p>Morning—or at least, the next phase—began with harsh lights and a long, metallic horn. The walls opened again, revealing a large hall with rows of desks.</p>
+                    <p>The floor sparkled white. The lights were harsh. On each desk: a folded green paper.</p>
+                    <p><strong>TRIAL THREE: Memory Match</strong></p>
+                    <p>"You must match the shapes beneath each card within the time limit."</p>
+                    <p>A timer blinked on the ceiling: 10:00. Make a wrong match? You lose a point. Lose too many points... and you're eliminated.</p>
+                </div>
+                <button id="start-trial" class="action-button">BEGIN TRIAL THREE</button>
+            </section>
+            
+            <section id="trial" class="trial-section hidden">
+                <h2>TRIAL THREE: MEMORY MATCH</h2>
+                <p class="instructions">Match the pairs of cards before time runs out. Each wrong match costs you a point. If you lose too many points, you'll be eliminated.</p>
+                
+                <div class="trial-container">
+                    <div class="stats">
+                        <span id="points">Points: 10</span>
+                        <span id="timer" class="timer">10:00</span>
+                    </div>
+                    
+                    <div id="memory-grid" class="memory-grid">
+                        <!-- Cards will be generated here -->
+                    </div>
+                    
+                    <div class="progress">
+                        <div class="stats">
+                            <span>Matched Pairs</span>
+                            <span id="pairs-counter">0/4</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div id="progress-fill" class="progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="results" class="results-section hidden">
+                <h2>TRIAL COMPLETE</h2>
+                <p class="survivors-count">114 Remain</p>
+                <p>From 142 to 114. The numbers continue to dwindle.</p>
+                <button id="continue-btn" class="action-button">CONTINUE TO CHAPTER 4</button>
+            </section>
+            
+            <section id="game-over" class="game-over-section hidden">
+                <h2>ELIMINATED</h2>
+                <p id="elimination-reason">You've lost all your points.</p>
+                <button onclick="window.location.href='failure.html'" class="action-button">CONTINUE</button>
+            </section>
+        </main>
+    </div>
+    
+    <script>
+        // Card symbols
+        const symbols = ['♠', '♥', '♦', '♣', '★', '✿', '✚', '⚡'];
+        
+        let cards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let points = 10;
+        let timeLeft = 600; // 10 minutes in seconds
+        let timerInterval;
+        
+        // DOM elements
+        const storySection = document.getElementById('story');
+        const trialSection = document.getElementById('trial');
+        const resultsSection = document.getElementById('results');
+        const gameOverSection = document.getElementById('game-over');
+        const startTrialBtn = document.getElementById('start-trial');
+        const memoryGrid = document.getElementById('memory-grid');
+        const pointsElement = document.getElementById('points');
+        const timerElement = document.getElementById('timer');
+        const pairsCounter = document.getElementById('pairs-counter');
+        const progressFill = document.getElementById('progress-fill');
+        const eliminationReason = document.getElementById('elimination-reason');
+        const continueBtn = document.getElementById('continue-btn');
+        
+        // Start trial
+        startTrialBtn.addEventListener('click', function() {
+            storySection.classList.add('hidden');
+            trialSection.classList.remove('hidden');
+            initializeGame();
+            startTimer();
+        });
+        
+        // Initialize game
+        function initializeGame() {
+            // Create pairs of cards
+            const selectedSymbols = symbols.slice(0, 4); // Use 4 symbols (8 cards total)
+            cards = [...selectedSymbols, ...selectedSymbols];
+            
+            // Shuffle cards
+            cards.sort(() => Math.random() - 0.5);
+            
+            // Create card elements
+            memoryGrid.innerHTML = '';
+            cards.forEach((symbol, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.dataset.index = index;
+                card.dataset.symbol = symbol;
+                
+                const cardContent = document.createElement('div');
+                cardContent.className = 'card-content';
+                cardContent.textContent = symbol;
+                
+                card.appendChild(cardContent);
+                card.addEventListener('click', flipCard);
+                
+                memoryGrid.appendChild(card);
+            });
+            
+            // Update counters
+            updateCounters();
+        }
+        
+        // Flip card
+        function flipCard() {
+            // If already flipped or matched, or two cards already flipped, do nothing
+            if (this.classList.contains('flipped') || 
+                this.classList.contains('matched') || 
+                flippedCards.length >= 2) {
+                return;
+            }
+            
+            // Flip the card
+            this.classList.add('flipped');
+            flippedCards.push(this);
+            
+            // If two cards are flipped, check for a match
+            if (flippedCards.length === 2) {
+                setTimeout(checkForMatch, 1000);
+            }
+        }
+        
+        // Check for match
+        function checkForMatch() {
+            const [card1, card2] = flippedCards;
+            
+            if (card1.dataset.symbol === card2.dataset.symbol) {
+                // Match found
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                matchedPairs++;
+                
+                // Check if all pairs are matched
+                if (matchedPairs === 4) {
+                    completeTrial(true);
+                }
+            } else {
+                // No match
+                card1.classList.remove('flipped');
+                card2.classList.remove('flipped');
+                
+                // Lose a point
+                points--;
+                
+                // Check if out of points
+                if (points <= 0) {
+                    completeTrial(false);
+                }
+            }
+            
+            // Clear flipped cards
+            flippedCards = [];
+            
+            // Update counters
+            updateCounters();
+        }
+        
+        // Update counters
+        function updateCounters() {
+            pointsElement.textContent = `Points: ${points}`;
+            pairsCounter.textContent = `${matchedPairs}/4`;
+            progressFill.style.width = `${(matchedPairs / 4) * 100}%`;
+            
+            // Change points color based on value
+            if (points <= 3) {
+                pointsElement.style.color = '#ef4444';
+            } else {
+                pointsElement.style.color = '#22c55e';
+            }
+        }
+        
+        // Format time as MM:SS
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        // Start timer
+        function startTimer() {
+            timerInterval = setInterval(function() {
+                timeLeft--;
+                timerElement.textContent = formatTime(timeLeft);
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    eliminationReason.textContent = "Time has run out.";
+                    completeTrial(false);
+                }
+                
+                // Change color when time is running low
+                if (timeLeft <= 60) {
+                    timerElement.style.color = '#ef4444';
+                } else {
+                    timerElement.style.color = '#22c55e';
+                }
+            }, 1000);
+        }
+        
+        // Complete trial
+        function completeTrial(success) {
+            clearInterval(timerInterval);
+            trialSection.classList.add('hidden');
+            
+            if (success) {
+                resultsSection.classList.remove('hidden');
+            } else {
+                gameOverSection.classList.remove('hidden');
+            }
+        }
+        
+        // Continue to next chapter
+        continueBtn.addEventListener('click', function() {
+            window.location.href = 'chapterfour.html';
+        });
+    </script>
+</body>
+</html>

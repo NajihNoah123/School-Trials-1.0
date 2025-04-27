@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Trials - Chapter 2: Equation Escape</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .trial-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 128, 0, 0.5);
+        }
+        
+        .room-visualization {
+            height: 200px;
+            background-color: #111;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #22c55e;
+        }
+        
+        .door {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 20px;
+            background-color: #444;
+            border-left: 1px solid #666;
+        }
+        
+        .door-handle {
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            width: 5px;
+            height: 10px;
+            background-color: #777;
+            border-radius: 2px;
+        }
+        
+        .keypad {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 60px;
+            background-color: #333;
+            border: 1px solid #666;
+            border-radius: 5px;
+            padding: 2px;
+        }
+        
+        .keypad-screen {
+            width: 100%;
+            height: 15px;
+            margin-bottom: 5px;
+            background-color: #ef4444;
+            border-radius: 3px;
+        }
+        
+        .keypad-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+        }
+        
+        .keypad-button {
+            width: 10px;
+            height: 10px;
+            background-color: #555;
+            border-radius: 2px;
+        }
+        
+        .problem-screen {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            width: 120px;
+            height: 80px;
+            background-color: #333;
+            border: 1px solid #666;
+            border-radius: 5px;
+            padding: 5px;
+            font-size: 10px;
+            color: #22c55e;
+        }
+        
+        .unlock-progress {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 50px;
+            height: 10px;
+            background-color: #333;
+            border: 1px solid #666;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .unlock-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #22c55e;
+            transition: width 0.5s;
+        }
+        
+        .math-problem {
+            background-color: #222;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        .answer-input {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .answer-input input {
+            flex: 1;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid #22c55e;
+            color: white;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        
+        .submit-btn {
+            background-color: #22c55e;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .timer {
+            font-size: 1.5rem;
+            text-align: right;
+            margin-bottom: 10px;
+            color: #22c55e;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .door-progress {
+            margin-top: 15px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #22c55e;
+            width: 0%;
+            transition: width 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SCHOOL TRIALS</h1>
+        </header>
+        
+        <main>
+            <section id="story" class="story-section">
+                <h2>Chapter 2: Equation Escape</h2>
+                <div class="story-text">
+                    <p>The room was different now. Gone were the desks. Gone was the massive chamber.</p>
+                    <p>The remaining 184 students stood in a dimly lit corridor, wide and winding like a snake, its ceiling glowing a dull blue. The walls on either side were dark green, matching their uniforms, and lined with narrow doors — each with a glowing red keypad.</p>
+                    <p>Whispers rippled through the group. "What's this place?" Ahmad muttered. "I don't like this," said Afnan, glancing at the locked doors.</p>
+                    <p>The screen blinked to life above them once again. This time, smaller. Just a thin strip running along the wall, like a creeping shadow.</p>
+                    <p><strong>TRIAL TWO: EQUATION ESCAPE</strong></p>
+                    <p>"You have 20 minutes to solve your way out. Each student will be placed in an individual room. You will face a set of basic math challenges. Wrong answers or delays will lock your door permanently."</p>
+                </div>
+                <button id="start-trial" class="action-button">BEGIN TRIAL TWO</button>
+            </section>
+            
+            <section id="trial" class="trial-section hidden">
+                <h2>TRIAL TWO: EQUATION ESCAPE</h2>
+                <p class="instructions">You have 20 minutes to solve a series of math problems. Each correct answer brings you closer to unlocking the door. Wrong answers will delay your escape.</p>
+                
+                <div class="trial-container">
+                    <div class="progress-info">
+                        <span id="problem-counter">Problem 1 of 10</span>
+                        <span id="timer" class="timer">20:00</span>
+                    </div>
+                    
+                    <div class="room-visualization">
+                        <div class="door">
+                            <div class="door-handle"></div>
+                        </div>
+                        <div class="keypad">
+                            <div id="keypad-screen" class="keypad-screen"></div>
+                            <div class="keypad-buttons">
+                                <div class="keypad-button"></div>
+                                <div class="keypad-button"></div>
+                                <div class="keypad-button"></div>
+                                <div class="keypad-button"></div>
+                                <div class="keypad-button"></div>
+                                <div class="keypad-button"></div>
+                                <div class="keypad-button"></div>
+                                <div class="keypad-button"></div>
+                                <div class="keypad-button"></div>
+                            </div>
+                        </div>
+                        <div class="problem-screen">
+                            <div>PROBLEM <span id="problem-number">1</span>/10</div>
+                        </div>
+                        <div class="unlock-progress">
+                            <div id="unlock-bar" class="unlock-bar"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="math-problem" class="math-problem">What is 56 + 19?</div>
+                    
+                    <div class="answer-input">
+                        <input type="text" id="answer" placeholder="Enter your answer...">
+                        <button id="submit-answer" class="submit-btn">SUBMIT</button>
+                    </div>
+                    
+                    <div id="feedback" class="feedback"></div>
+                    
+                    <div class="door-progress">
+                        <div class="progress-info">
+                            <span>Door Lock</span>
+                            <span id="unlock-percentage">0% Unlocked</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div id="progress-fill" class="progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="results" class="results-section hidden">
+                <h2>TRIAL COMPLETE</h2>
+                <p class="survivors-count">142 Remain</p>
+                <p>From 184 to 142. Another 42 students eliminated.</p>
+                <button id="continue-btn" class="action-button">CONTINUE TO CHAPTER 3</button>
+            </section>
+            
+            <section id="game-over" class="game-over-section hidden">
+                <h2>DOOR LOCKED PERMANENTLY</h2>
+                <p>You have been trapped in the room.</p>
+                <button onclick="window.location.href='failure.html'" class="action-button">CONTINUE</button>
+            </section>
+        </main>
+    </div>
+    
+    <script>
+        // Math problems
+        const mathProblems = [
+            { id: 1, question: "What is 56 + 19?", answer: "75" },
+            { id: 2, question: "What is the perimeter of a rectangle with length 6 and breadth 3?", answer: "18" },
+            { id: 3, question: "72 ÷ 8 = ?", answer: "9" },
+            { id: 4, question: "Area of square with side 5?", answer: "25" },
+            { id: 5, question: "What is 34 + 18?", answer: "52" },
+            { id: 6, question: "100 - 47 = ?", answer: "53" },
+            { id: 7, question: "Multiply 7 by 6.", answer: "42" },
+            { id: 8, question: "What is 45 + 38?", answer: "83" },
+            { id: 9, question: "Area of rectangle: length 8, breadth 7.", answer: "56" },
+            { id: 10, question: "What is 12 × 5?", answer: "60" }
+        ];
+        
+        let currentProblem = 0;
+        let timeLeft = 1200; // 20 minutes in seconds
+        let timerInterval;
+        let wrongAttempts = 0;
+        let unlockProgress = 0;
+        
+        // DOM elements
+        const storySection = document.getElementById('story');
+        const trialSection = document.getElementById('trial');
+        const resultsSection = document.getElementById('results');
+        const gameOverSection = document.getElementById('game-over');
+        const startTrialBtn = document.getElementById('start-trial');
+        const problemCounter = document.getElementById('problem-counter');
+        const problemNumber = document.getElementById('problem-number');
+        const timerElement = document.getElementById('timer');
+        const mathProblemElement = document.getElementById('math-problem');
+        const answerInput = document.getElementById('answer');
+        const submitBtn = document.getElementById('submit-answer');
+        const feedbackElement = document.getElementById('feedback');
+        const unlockBar = document.getElementById('unlock-bar');
+        const progressFill = document.getElementById('progress-fill');
+        const unlockPercentage = document.getElementById('unlock-percentage');
+        const keypadScreen = document.getElementById('keypad-screen');
+        const continueBtn = document.getElementById('continue-btn');
+        
+        // Start trial
+        startTrialBtn.addEventListener('click', function() {
+            storySection.classList.add('hidden');
+            trialSection.classList.remove('hidden');
+            startTimer();
+            loadProblem();
+        });
+        
+        // Load problem
+        function loadProblem() {
+            if (currentProblem >= mathProblems.length) {
+                completeTrial(true);
+                return;
+            }
+            
+            const problem = mathProblems[currentProblem];
+            mathProblemElement.textContent = problem.question;
+            problemCounter.textContent = `Problem ${currentProblem + 1} of ${mathProblems.length}`;
+            problemNumber.textContent = currentProblem + 1;
+            
+            // Clear input and feedback
+            answerInput.value = '';
+            feedbackElement.textContent = '';
+            feedbackElement.className = 'feedback';
+            
+            // Focus on input
+            answerInput.focus();
+        }
+        
+        // Format time as MM:SS
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        // Start timer
+        function startTimer() {
+            timerInterval = setInterval(function() {
+                timeLeft--;
+                timerElement.textContent = formatTime(timeLeft);
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    completeTrial(false);
+                }
+                
+                // Change color when time is running low
+                if (timeLeft <= 60) {
+                    timerElement.style.color = '#ef4444';
+                } else {
+                    timerElement.style.color = '#22c55e';
+                }
+            }, 1000);
+        }
+        
+        // Submit answer
+        submitBtn.addEventListener('click', checkAnswer);
+        
+        // Check answer
+        function checkAnswer() {
+            const answer = answerInput.value.trim();
+            
+            if (answer === '') {
+                return;
+            }
+            
+            const problem = mathProblems[currentProblem];
+            
+            if (answer === problem.answer) {
+                // Correct answer
+                feedbackElement.textContent = 'Correct!';
+                feedbackElement.className = 'feedback success';
+                
+                // Increase unlock progress
+                unlockProgress += 10;
+                updateUnlockProgress();
+                
+                // Move to next problem
+                currentProblem++;
+                
+                setTimeout(function() {
+                    if (currentProblem >= mathProblems.length) {
+                        completeTrial(true);
+                    } else {
+                        loadProblem();
+                    }
+                }, 1000);
+            } else {
+                // Wrong answer
+                wrongAttempts++;
+                feedbackElement.textContent = `Wrong answer. You have ${3 - wrongAttempts} attempts remaining.`;
+                feedbackElement.className = 'feedback error';
+                
+                if (wrongAttempts >= 3) {
+                    completeTrial(false);
+                }
+            }
+        }
+        
+        // Update unlock progress
+        function updateUnlockProgress() {
+            unlockBar.style.width = `${unlockProgress}%`;
+            progressFill.style.width = `${unlockProgress}%`;
+            unlockPercentage.textContent = `${unlockProgress}% Unlocked`;
+            
+            // Update keypad screen color
+            if (unlockProgress >= 100) {
+                keypadScreen.style.backgroundColor = '#22c55e';
+            }
+        }
+        
+        // Complete trial
+        function completeTrial(success) {
+            clearInterval(timerInterval);
+            trialSection.classList.add('hidden');
+            
+            if (success) {
+                resultsSection.classList.remove('hidden');
+            } else {
+                gameOverSection.classList.remove('hidden');
+            }
+        }
+        
+        // Continue to next chapter
+        continueBtn.addEventListener('click', function() {
+            window.location.href = 'chapterthree.html';
+        });
+        
+        // Handle Enter key for input
+        answerInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+    </script>
+</body>
+</html>

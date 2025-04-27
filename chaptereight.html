@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 8: Silent Strategy - SCHOOL TRIALS</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-black text-white font-mono">
+    <div class="container mx-auto px-4 py-8 min-h-screen">
+        <h1 class="text-4xl font-bold mb-8 text-center glitch-text">CHAPTER 8: SILENT STRATEGY</h1>
+        
+        <section id="story" class="story-section mb-12">
+            <div class="story-text max-w-3xl mx-auto">
+                <p>The 10 remaining students were escorted to a new area of the facility. This section was different—cleaner, more clinical. The walls were stark white, and the floors were polished to a mirror shine. The air smelled of antiseptic and something else... something metallic.</p>
+                
+                <p>They were led into a circular room with four doors, each marked with a different symbol: a triangle, a square, a circle, and a star.</p>
+                
+                <p>"What do you think these mean?" whispered Ramil.</p>
+                
+                <p>Before anyone could answer, a harsh buzzer sounded, causing everyone to flinch. The mechanical voice returned, but this time it was accompanied by text scrolling across screens embedded in the walls.</p>
+                
+                <p><strong>TRIAL EIGHT: SILENT STRATEGY</strong></p>
+                
+                <p>"You will be divided into teams of four. Each team will enter one of these rooms and face a pattern puzzle. You must solve it together, but there is one rule: absolute silence."</p>
+                
+                <p>The students exchanged nervous glances.</p>
+                
+                <p>"Any verbal communication—any sound at all—will result in immediate disqualification. You must develop a system of non-verbal communication to solve the puzzle within the time limit."</p>
+                
+                <p>The voice paused, then continued with a tone that somehow seemed colder.</p>
+                
+                <p>"Remember: in this trial, your greatest enemy is not the puzzle... it's your own voice."</p>
+                
+                <p>The doors slid open with a soft hiss, revealing identical rooms beyond, each containing a large wall covered in colored symbols.</p>
+            </div>
+            <div class="text-center mt-8">
+                <button id="continue-to-trial" class="game-btn px-8 py-3 text-xl bg-red-900 hover:bg-red-700 transition-colors duration-300 rounded-sm">ENTER ROOM</button>
+            </div>
+        </section>
+        
+        <div id="trial-section" class="hidden">
+            <div class="survivor-count text-center mb-6" id="survivor-count">10 students remain</div>
+            
+            <div class="trial-container screen-flicker">
+                <div class="trial-title">TRIAL EIGHT: SILENT STRATEGY</div>
+                
+                <div class="trial-description mb-8">
+                    <p>You will be paired in teams of four. Each team will be placed in a room with a puzzle wall.</p>
+                    <p>Solve the pattern using only hand signals. No speaking. No writing. No sound.</p>
+                    <p>The team that fails to solve the puzzle in 15 minutes will be eliminated.</p>
+                    <p class="text-red-500 mt-4">ANY SPEAKING DURING TRIAL WILL LEAD TO INSTANT DISQUALIFICATION.</p>
+                </div>
+                
+                <div class="timer text-center mb-8" id="timer">15:00</div>
+                
+                <div class="mb-8 text-center">
+                    <p class="text-red-500 mb-4">Your team:</p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+                        <div class="bg-gray-900 p-3 border border-red-900">
+                            <div class="text-3xl mb-2">👦</div>
+                            <p id="team-member-1">You</p>
+                        </div>
+                        <div class="bg-gray-900 p-3 border border-red-900">
+                            <div class="text-3xl mb-2">👦</div>
+                            <p id="team-member-2">Najih</p>
+                        </div>
+                        <div class="bg-gray-900 p-3 border border-red-900">
+                            <div class="text-3xl mb-2">👦</div>
+                            <p id="team-member-3">Ramil</p>
+                        </div>
+                        <div class="bg-gray-900 p-3 border border-red-900">
+                            <div class="text-3xl mb-2">👦</div>
+                            <p id="team-member-4">Yash</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="puzzle-container" class="bg-gray-900 border border-red-900 p-4 h-80 mb-8 relative">
+                    <!-- Puzzle will be generated by JavaScript -->
+                    <div class="grid grid-cols-3 grid-rows-3 gap-4 h-full" id="puzzle-grid">
+                        <!-- Puzzle tiles will be added here -->
+                    </div>
+                </div>
+                
+                <div id="gesture-area" class="mb-8">
+                    <p class="text-center mb-4">Use gestures to communicate with your team:</p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+                        <button class="gesture-btn p-3 bg-gray-800 hover:bg-gray-700 border border-gray-600" data-gesture="point">
+                            <div class="text-2xl mb-2">👉</div>
+                            <p>Point</p>
+                        </button>
+                        <button class="gesture-btn p-3 bg-gray-800 hover:bg-gray-700 border border-gray-600" data-gesture="rotate">
+                            <div class="text-2xl mb-2">🔄</div>
+                            <p>Rotate</p>
+                        </button>
+                        <button class="gesture-btn p-3 bg-gray-800 hover:bg-gray-700 border border-gray-600" data-gesture="swap">
+                            <div class="text-2xl mb-2">🔀</div>
+                            <p>Swap</p>
+                        </button>
+                        <button class="gesture-btn p-3 bg-gray-800 hover:bg-gray-700 border border-gray-600" data-gesture="approve">
+                            <div class="text-2xl mb-2">👍</div>
+                            <p>Approve</p>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <button id="start-trial" class="game-btn px-8 py-3 text-xl bg-red-900 hover:bg-red-700 transition-colors duration-300 rounded-sm">START TRIAL</button>
+                    <button id="submit-solution" class="game-btn px-8 py-3 text-xl bg-red-900 hover:bg-red-700 transition-colors duration-300 rounded-sm hidden">SUBMIT SOLUTION</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="fixed bottom-4 right-4 flex space-x-4">
+            <button id="sound-toggle" class="px-3 py-1 bg-gray-800 rounded-sm">🔊</button>
+            <button id="music-toggle" class="px-3 py-1 bg-gray-800 rounded-sm">♪ ON</button>
+        </div>
+    </div>
+    
+    <script src="scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load game state
+            loadGameState();
+            gameState.survivorCount = 10; // Set for this chapter
+            updateSurvivorCount();
+            
+            // Play ambient music
+            playMusic('sounds/tension_theme.mp3');
+            
+            // Continue to trial button
+            document.getElementById('continue-to-trial').addEventListener('click', function() {
+                playSound('sounds/click.mp3');
+                document.getElementById('story').classList.add('hidden');
+                document.getElementById('trial-section').classList.remove('hidden');
+            });
+            
+            // Trial elements
+            const startButton = document.getElementById('start-trial');
+            const submitButton = document.getElementById('submit-solution');
+            const puzzleGrid = document.getElementById('puzzle-grid');
+            const gestureButtons = document.querySelectorAll('.gesture-btn');
+            
+            // Team members
+            const teamMember2 = document.getElementById('team-member-2');
+            const teamMember3 = document.getElementById('team-member-3');
+            const teamMember4 = document.getElementById('team-member-4');
+            
+            // Set team members based on character selection
+            const possibleTeammates = ['Najih', 'Isa', 'Ramil', 'Yash', 'Ahmad', 'Ridwaan', 'Arjun', 'Raaz', 'Danish'];
+            const filteredTeammates = possibleTeammates.filter(name => name.toLowerCase() !== gameState.characterSelected);
+            
+            // Shuffle and pick 3
+            const shuffledTeammates = shuffleArray([...filteredTeammates]);
+            teamMember2.textContent = shuffledTeammates[0];
+            teamMember3.textContent = shuffledTeammates[1];
+            teamMember4.textContent = shuffledTeammates[2];
+            
+            // Puzzle configuration
+            const puzzleSymbols = ['▲', '■', '●', '◆', '★', '✦', '✚', '✖', '◎'];
+            const puzzleColors = ['text-red-500', 'text-blue-500', 'text-green-500', 'text-yellow-500', 'text-purple-500', 'text-pink-500'];
+            let puzzleSolution = [];
+            let currentPuzzleState = [];
+            let selectedTile = null;
+            let currentGesture = null;
+            
+            // Generate puzzle
+            function generatePuzzle() {
+                puzzleSolution = [];
+                currentPuzzleState = [];
+                
+                // Create a pattern (for demo, we'll use a simple pattern)
+                // In a real implementation, this would be more complex
+                
+                // Pattern: symbols in order, colors alternate
+                for (let i = 0; i < 9; i++) {
+                    const symbol = puzzleSymbols[i % puzzleSymbols.length];
+                    const color = puzzleColors[i % 2 === 0 ? 0 : 1]; // Alternate red and blue
+                    
+                    puzzleSolution.push({ symbol, color, position: i });
+                }
+                
+                // Shuffle for initial state
+                currentPuzzleState = shuffleArray([...puzzleSolution]);
+            }
+            
+            // Render puzzle
+            function renderPuzzle() {
+                puzzleGrid.innerHTML = '';
+                
+                currentPuzzleState.forEach((tile, index) => {
+                    const tileElement = document.createElement('div');
+                    tileElement.className = `flex items-center justify-center text-4xl ${tile.color} bg-gray-800 border border-gray-700 cursor-pointer hover:bg-gray-700 transition-colors duration-200`;
+                    tileElement.textContent = tile.symbol;
+                    tileElement.dataset.index = index;
+                    
+                    // Add selected class if this is the selected tile
+                    if (selectedTile === index) {
+                        tileElement.classList.add('ring-2', 'ring-white');
+                    }
+                    
+                    tileElement.addEventListener('click', () => {
+                        selectTile(index);
+                    });
+                    
+                    puzzleGrid.appendChild(tileElement);
+                });
+            }
+            
+            // Select a tile
+            function selectTile(index) {
+                if (selectedTile === index) {
+                    // Deselect if already selected
+                    selectedTile = null;
+                } else {
+                    // If we already have a selected tile and a gesture
+                    if (selectedTile !== null && currentGesture === 'swap') {
+                        // Swap tiles
+                        const temp = currentPuzzleState[selectedTile];
+                        currentPuzzleState[selectedTile] = currentPuzzleState[index];
+                        currentPuzzleState[index] = temp;
+                        
+                        // Reset selection
+                        selectedTile = null;
+                        currentGesture = null;
+                        
+                        // Show teammate gesture
+                        showTeammateGesture();
+                    } else if (currentGesture === 'rotate' && selectedTile === null) {
+                        // Rotate symbol (cycle through symbols)
+                        const currentSymbolIndex = puzzleSymbols.indexOf(currentPuzzleState[index].symbol);
+                        const nextSymbolIndex = (currentSymbolIndex + 1) % puzzleSymbols.length;
+                        currentPuzzleState[index].symbol = puzzleSymbols[nextSymbolIndex];
+                        
+                        // Reset gesture
+                        currentGesture = null;
+                        
+                        // Show teammate gesture
+                        showTeammateGesture();
+                    } else {
+                        // Just select this tile
+                        selectedTile = index;
+                    }
+                }
+                
+                // Re-render puzzle
+                renderPuzzle();
+                
+                // Play sound
+                playSound('sounds/click.mp3');
+            }
+            
+            // Handle gesture button click
+            gestureButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const gesture = button.dataset.gesture;
+                    currentGesture = gesture;
+                    
+                    // Remove selected class from all gesture buttons
+                    gestureButtons.forEach(btn => {
+                        btn.classList.remove('bg-red-900', 'border-red-600');
+                        btn.classList.add('bg-gray-800', 'border-gray-600');
+                    });
+                    
+                    // Add selected class to clicked button
+                    button.classList.remove('bg-gray-800', 'border-gray-600');
+                    button.classList.add('bg-red-900', 'border-red-600');
+                    
+                    // If approve gesture, check solution
+                    if (gesture === 'approve') {
+                        checkSolution();
+                    }
+                    
+                    // Play sound
+                    playSound('sounds/click.mp3');
+                    
+                    // Show teammate gesture
+                    showTeammateGesture();
+                });
+            });
+            
+            // Show teammate making a gesture
+            function showTeammateGesture() {
+                // Randomly select a teammate
+                const teammates = [teamMember2, teamMember3, teamMember4];
+                const randomTeammate = teammates[Math.floor(Math.random() * teammates.length)];
+                
+                // Create gesture indicator
+                const gestureIndicator = document.createElement('div');
+                gestureIndicator.className = 'absolute top-2 right-2 bg-gray-800 p-2 rounded-sm text-sm';
+                
+                // Random gesture
+                const gestures = ['👉', '🔄', '🔀', '👍', '👎', '🤔'];
+                const randomGesture = gestures[Math.floor(Math.random() * gestures.length)];
+                
+                gestureIndicator.innerHTML = `${randomTeammate.textContent}: <span class="text-xl">${randomGesture}</span>`;
+                
+                // Add to puzzle container
+                const puzzleContainer = document.getElementById('puzzle-container');
+                
+                // Remove any existing gesture indicators
+                const existingIndicators = puzzleContainer.querySelectorAll('.absolute');
+                existingIndicators.forEach(indicator => {
+                    indicator.remove();
+                });
+                
+                puzzleContainer.appendChild(gestureIndicator);
+                
+                // Remove after a few seconds
+                setTimeout(() => {
+                    gestureIndicator.remove();
+                }, 3000);
+            }
+            
+            // Check if puzzle is solved
+            function checkSolution() {
+                // For demo purposes, we'll consider it solved if at least 6 tiles are in correct position
+                let correctPositions = 0;
+                
+                currentPuzzleState.forEach((tile, index) => {
+                    if (tile.symbol === puzzleSolution[index].symbol && tile.color === puzzleSolution[index].color) {
+                        correctPositions++;
+                    }
+                });
+                
+                // Show result
+                if (correctPositions >= 6) {
+                    // Success
+                    submitButton.click();
+                } else {
+                    // Not yet solved
+                    showModal('Not Quite Right', 'The puzzle is not yet solved correctly. Keep trying!', 'Continue');
+                }
+            }
+            
+            // Start trial
+            startButton.addEventListener('click', function() {
+                playSound('sounds/click.mp3');
+                startButton.classList.add('hidden');
+                submitButton.classList.remove('hidden');
+                
+                // Generate and render puzzle
+                generatePuzzle();
+                renderPuzzle();
+                
+                // Start timer
+                startTimer(15 * 60, () => {
+                    // Time's up
+                    gameOver('Your team ran out of time to solve the puzzle.');
+                });
+                
+                // Show warning about speaking
+                showModal('SILENCE REQUIRED', 'Remember: ANY speaking during this trial will result in immediate disqualification.', 'I Understand');
+            });
+            
+            // Submit solution
+            submitButton.addEventListener('click', function() {
+                stopTimer();
+                playSound('sounds/success.mp3');
+                
+                // Calculate elimination
+                const eliminationRate = 0.5; // 50% elimination
+                const eliminated = Math.floor(gameState.survivorCount * eliminationRate);
+                const remaining = gameState.survivorCount - eliminated;
+                
+                trialSuccess(remaining, 'chapternine.html');
+            });
+        });
+    </script>
+</body>
+</html>

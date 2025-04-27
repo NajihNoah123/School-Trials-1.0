@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Trials - Chapter 4: Balance Line</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .trial-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 128, 0, 0.5);
+        }
+        
+        .balance-game {
+            height: 300px;
+            background-color: #111;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #22c55e;
+        }
+        
+        .balance-beam {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background-color: #555;
+            top: 60%;
+            transform-origin: center;
+            transition: transform 0.3s;
+        }
+        
+        .player {
+            position: absolute;
+            width: 30px;
+            height: 50px;
+            bottom: calc(40% + 10px);
+            left: calc(50% - 15px);
+            transition: left 0.3s, transform 0.3s;
+        }
+        
+        .player-body {
+            width: 100%;
+            height: 70%;
+            background-color: #22c55e;
+            border-radius: 50% 50% 0 0;
+            position: relative;
+        }
+        
+        .player-head {
+            width: 20px;
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 50%;
+            position: absolute;
+            top: -15px;
+            left: 5px;
+        }
+        
+        .player-arms {
+            width: 40px;
+            height: 5px;
+            background-color: #22c55e;
+            position: absolute;
+            top: 10px;
+            left: -5px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #22c55e;
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .balance-meter {
+            margin-bottom: 15px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            background-color: #333;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .control-btn:hover {
+            background-color: #444;
+        }
+        
+        .control-btn:active {
+            background-color: #22c55e;
+        }
+        
+        .timer {
+            font-size: 1.5rem;
+            text-align: right;
+            margin-bottom: 10px;
+            color: #22c55e;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .instructions {
+            text-align: center;
+            margin-top: 15px;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SCHOOL TRIALS</h1>
+        </header>
+        
+        <main>
+            <section id="story" class="story-section">
+                <h2>Chapter 4: Balance Line</h2>
+                <div class="story-text">
+                    <p>The next morning, the 114 remaining students were led to a new area. A massive gymnasium with a high ceiling and polished floors that reflected the harsh white lights above.</p>
+                    <p>In the center of the room was a long, narrow beam elevated about three feet off the ground. It stretched from one end of the gym to the other, at least fifty feet long.</p>
+                    <p>The screen flickered on, casting an eerie green glow across the polished floor.</p>
+                    <p><strong>TRIAL FOUR: BALANCE LINE</strong></p>
+                    <p>"Each student must cross the beam while maintaining perfect balance. The beam will tilt and shift unpredictably. Fall off, and you are eliminated."</p>
+                    <p>The students looked at each other nervously. This wasn't a test of knowledge or memory. This was physical. And for many of them, that was far more terrifying.</p>
+                </div>
+                <button id="start-trial" class="action-button">BEGIN TRIAL FOUR</button>
+            </section>
+            
+            <section id="trial" class="trial-section hidden">
+                <h2>TRIAL FOUR: BALANCE LINE</h2>
+                <p class="instructions">Cross the balance beam without falling off. Use the arrow keys to maintain your balance as the beam shifts unpredictably.</p>
+                
+                <div class="trial-container">
+                    <div class="stats">
+                        <span id="progress-text">Progress: 0%</span>
+                        <span id="timer" class="timer">60</span>
+                    </div>
+                    
+                    <div class="balance-meter">
+                        <div class="stats">
+                            <span>Balance</span>
+                            <span id="balance-percentage">50%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div id="balance-fill" class="progress-fill" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="balance-game">
+                        <div id="balance-beam" class="balance-beam"></div>
+                        <div id="player" class="player">
+                            <div class="player-body">
+                                <div class="player-head"></div>
+                                <div class="player-arms"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="controls">
+                        <button id="left-btn" class="control-btn">←</button>
+                        <button id="right-btn" class="control-btn">→</button>
+                    </div>
+                    
+                    <div class="progress">
+                        <div class="stats">
+                            <span>Progress</span>
+                            <span id="progress-counter">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div id="progress-fill" class="progress-fill"></div>
+                        </div>
+                    </div>
+                    
+                    <p class="instructions">Use the left and right arrow keys (or buttons) to maintain your balance.</p>
+                </div>
+            </section>
+            
+            <section id="results" class="results-section hidden">
+                <h2>TRIAL COMPLETE</h2>
+                <p class="survivors-count">87 Remain</p>
+                <p>From 114 to 87. The trials grow more challenging.</p>
+                <button id="continue-btn" class="action-button">CONTINUE TO CHAPTER 5</button>
+            </section>
+            
+            <section id="game-over" class="game-over-section hidden">
+                <h2>YOU FELL</h2>
+                <p>You lost your balance and fell from the beam.</p>
+                <button onclick="window.location.href='failure.html'" class="action-button">CONTINUE</button>
+            </section>
+        </main>
+    </div>
+    
+    <script>
+        let position = 50; // Player position (0-100)
+        let balance = 50; // Balance level (0-100)
+        let progress = 0; // Progress across beam (0-100)
+        let beamTilt = 0; // Current tilt of the beam (-10 to 10)
+        let timeLeft = 60; // 60 seconds to complete
+        let difficulty = 1; // Increases as you progress
+        let gameOver = false;
+        let gameInterval;
+        let timerInterval;
+        
+        // DOM elements
+        const storySection = document.getElementById('story');
+        const trialSection = document.getElementById('trial');
+        const resultsSection = document.getElementById('results');
+        const gameOverSection = document.getElementById('game-over');
+        const startTrialBtn = document.getElementById('start-trial');
+        const balanceBeam = document.getElementById('balance-beam');
+        const player = document.getElementById('player');
+        const balanceFill = document.getElementById('balance-fill');
+        const balancePercentage = document.getElementById('balance-percentage');
+        const progressFill = document.getElementById('progress-fill');
+        const progressCounter = document.getElementById('progress-counter');
+        const progressText = document.getElementById('progress-text');
+        const timerElement = document.getElementById('timer');
+        const leftBtn = document.getElementById('left-btn');
+        const rightBtn = document.getElementById('right-btn');
+        const continueBtn = document.getElementById('continue-btn');
+        
+        // Start trial
+        startTrialBtn.addEventListener('click', function() {
+            storySection.classList.add('hidden');
+            trialSection.classList.remove('hidden');
+            startGame();
+        });
+        
+        // Start game
+        function startGame() {
+            // Set up keyboard controls
+            document.addEventListener('keydown', handleKeyDown);
+            
+            // Set up button controls
+            leftBtn.addEventListener('mousedown', () => movePlayer('left'));
+            rightBtn.addEventListener('mousedown', () => movePlayer('right'));
+            
+            // Start game loop
+            gameInterval = setInterval(updateGame, 100);
+            
+            // Start timer
+            timerInterval = setInterval(function() {
+                timeLeft--;
+                timerElement.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    endGame(false);
+                }
+                
+                // Change color when time is running low
+                if (timeLeft <= 10) {
+                    timerElement.style.color = '#ef4444';
+                } else {
+                    timerElement.style.color = '#22c55e';
+                }
+            }, 1000);
+        }
+        
+        // Handle key press
+        function handleKeyDown(e) {
+            if (gameOver) return;
+            
+            if (e.key === 'ArrowLeft') {
+                movePlayer('left');
+            } else if (e.key === 'ArrowRight') {
+                movePlayer('right');
+            }
+        }
+        
+        // Move player
+        function movePlayer(direction) {
+            if (gameOver) return;
+            
+            if (direction === 'left') {
+                position = Math.max(0, position - 3);
+            } else if (direction === 'right') {
+                position = Math.min(100, position + 3);
+            }
+            
+            updatePlayerPosition();
+        }
+        
+        // Update player position
+        function updatePlayerPosition() {
+            player.style.left = `calc(${position}% - 15px)`;
+        }
+        
+        // Update game state
+        function updateGame() {
+            if (gameOver) return;
+            
+            // Random beam tilt changes
+            const tiltChange = (Math.random() - 0.5) * difficulty;
+            beamTilt = Math.max(-10, Math.min(10, beamTilt + tiltChange));
+            balanceBeam.style.transform = `rotate(${beamTilt}deg)`;
+            
+            // Calculate balance based on position and beam tilt
+            const idealPosition = 50 - beamTilt * 2; // The "sweet spot" changes with beam tilt
+            const positionDiff = Math.abs(position - idealPosition);
+            balance = Math.max(0, 100 - positionDiff * 2);
+            
+            // Update balance display
+            balanceFill.style.width = `${balance}%`;
+            balancePercentage.textContent = `${Math.floor(balance)}%`;
+            
+            // Change balance color based on value
+            if (balance <= 30) {
+                balanceFill.style.backgroundColor = '#ef4444';
+            } else if (balance <= 60) {
+                balanceFill.style.backgroundColor = '#eab308';
+            } else {
+                balanceFill.style.backgroundColor = '#22c55e';
+            }
+            
+            // Update player rotation to match beam
+            player.style.transform = `rotate(${beamTilt}deg)`;
+            
+            // Progress increases if balance is good
+            if (balance > 60) {
+                progress = Math.min(100, progress + 0.5);
+                updateProgress();
+            }
+            
+            // Fall if balance is too low
+            if (balance < 20) {
+                endGame(false);
+            }
+            
+            // Increase difficulty as you progress
+            if (progress > 25 && difficulty < 1.5) difficulty = 1.5;
+            if (progress > 50 && difficulty < 2) difficulty = 2;
+            if (progress > 75 && difficulty < 2.5) difficulty = 2.5;
+            
+            // Win if you reach the end
+            if (progress >= 100) {
+                endGame(true);
+            }
+        }
+        
+        // Update progress display
+        function updateProgress() {
+            progressFill.style.width = `${progress}%`;
+            progressCounter.textContent = `${Math.floor(progress)}%`;
+            progressText.textContent = `Progress: ${Math.floor(progress)}%`;
+        }
+        
+        // End game
+        function endGame(success) {
+            gameOver = true;
+            clearInterval(gameInterval);
+            clearInterval(timerInterval);
+            document.removeEventListener('keydown', handleKeyDown);
+            
+            setTimeout(function() {
+                trialSection.classList.add('hidden');
+                
+                if (success) {
+                    resultsSection.classList.remove('hidden');
+                } else {
+                    gameOverSection.classList.remove('hidden');
+                }
+            }, 1000);
+        }
+        
+        // Continue to next chapter
+        continueBtn.addEventListener('click', function() {
+            window.location.href = 'chapterfive.html';
+        });
+    </script>
+</body>
+</html>

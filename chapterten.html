@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 10: Graduation - SCHOOL TRIALS</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-black text-white font-mono">
+    <div class="container mx-auto px-4 py-8 min-h-screen">
+        <h1 class="text-4xl font-bold mb-8 text-center glitch-text">CHAPTER 10: GRADUATION</h1>
+        
+        <div class="survivor-count text-center mb-6" id="survivor-count">5 students remain</div>
+        
+        <div class="trial-container screen-flicker">
+            <div class="trial-title">FINAL TRIAL: GRADUATION</div>
+            
+            <div class="trial-description mb-8">
+                <p>You will receive a single question.</p>
+                <p>There is no time limit.</p>
+                <p>Only one may answer.</p>
+                <p class="text-red-500">The rest will be eliminated.</p>
+            </div>
+            
+            <div class="mb-12 text-center">
+                <p class="text-2xl mb-8">Final Question:</p>
+                <p class="text-3xl text-red-500 mb-12">"What is the most important lesson you have learned through all these trials?"</p>
+            </div>
+            
+            <div id="answer-container" class="mb-8">
+                <textarea id="final-answer" class="w-full h-40 bg-gray-900 border border-red-900 p-4 text-white" placeholder="Type your answer here..."></textarea>
+            </div>
+            
+            <div id="other-answers" class="mb-8 hidden">
+                <p class="text-xl mb-4">Other students' answers:</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gray-900 border border-gray-700 p-3">
+                        <p class="text-gray-400 mb-1">Najih:</p>
+                        <p>"The most important lesson is that success requires both intelligence and adaptability. No challenge is insurmountable with the right approach."</p>
+                    </div>
+                    
+                    <div class="bg-gray-900 border border-gray-700 p-3">
+                        <p class="text-gray-400 mb-1">Arjun:</p>
+                        <p>"I learned that fear can be overcome through focus. When we concentrate on the task rather than the consequences, we perform better."</p>
+                    </div>
+                    
+                    <div class="bg-gray-900 border border-gray-700 p-3">
+                        <p class="text-gray-400 mb-1">Ganet:</p>
+                        <p>"The trials taught me that we are stronger than we think. Our limits are often self-imposed."</p>
+                    </div>
+                    
+                    <div class="bg-gray-900 border border-gray-700 p-3">
+                        <p class="text-gray-400 mb-1">Danish:</p>
+                        <p>"I learned that competition doesn't have to mean isolation. Even as we fought to survive, we helped each other."</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <button id="start-trial" class="game-btn px-8 py-3 text-xl bg-red-900 hover:bg-red-700 transition-colors duration-300 rounded-sm">REVEAL QUESTION</button>
+                <button id="submit-answer" class="game-btn px-8 py-3 text-xl bg-red-900 hover:bg-red-700 transition-colors duration-300 rounded-sm hidden">SUBMIT ANSWER</button>
+                <button id="view-answers" class="game-btn px-8 py-3 text-xl bg-gray-800 hover:bg-gray-700 transition-colors duration-300 rounded-sm hidden">VIEW OTHER ANSWERS</button>
+            </div>
+        </div>
+        
+        <div class="fixed bottom-4 right-4 flex space-x-4">
+            <button id="sound-toggle" class="px-3 py-1 bg-gray-800 rounded-sm">🔊</button>
+            <button id="music-toggle" class="px-3 py-1 bg-gray-800 rounded-sm">♪ ON</button>
+        </div>
+    </div>
+    
+    <script src="scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load game state
+            loadGameState();
+            gameState.survivorCount = 5; // Set for this chapter
+            updateSurvivorCount();
+            
+            // Play trial music
+            playMusic('sounds/tension_theme.mp3');
+            
+            // Trial elements
+            const startButton = document.getElementById('start-trial');
+            const submitButton = document.getElementById('submit-answer');
+            const viewAnswersButton = document.getElementById('view-answers');
+            const finalAnswer = document.getElementById('final-answer');
+            const otherAnswers = document.getElementById('other-answers');
+            
+            // Start trial
+            startButton.addEventListener('click', function() {
+                playSound('sounds/click.mp3');
+                startButton.classList.add('hidden');
+                submitButton.classList.remove('hidden');
+                
+                // Show typing animation for the question
+                const questionElement = document.querySelector('.text-3xl.text-red-500');
+                questionElement.style.opacity = '0';
+                
+                setTimeout(() => {
+                    questionElement.style.opacity = '1';
+                    questionElement.classList.add('typing-effect');
+                    
+                    // Focus on answer textarea
+                    finalAnswer.focus();
+                }, 1000);
+            });
+            
+            // Submit answer
+            submitButton.addEventListener('click', function() {
+                const answer = finalAnswer.value.trim();
+                
+                if (!answer) {
+                    showModal('No Answer Provided', 'Please provide an answer to the final question.', 'OK');
+                    return;
+                }
+                
+                playSound('sounds/success.mp3');
+                submitButton.classList.add('hidden');
+                viewAnswersButton.classList.remove('hidden');
+                
+                // Disable textarea
+                finalAnswer.disabled = true;
+                
+                // Show success message
+                showModal('Answer Submitted', 'Your answer has been recorded. The final decision will now be made.', 'Continue');
+            });
+            
+            // View other answers
+            viewAnswersButton.addEventListener('click', function() {
+                playSound('sounds/click.mp3');
+                otherAnswers.classList.remove('hidden');
+                viewAnswersButton.classList.add('hidden');
+                
+                // Show final results after a delay
+                setTimeout(() => {
+                    // Determine winner based on character and answer
+                    let isWinner = false;
+                    const answer = finalAnswer.value.toLowerCase();
+                    
+                    // Check for keywords in answer that might indicate a good response
+                    if (answer.includes('together') || 
+                        answer.includes('cooperation') || 
+                        answer.includes('help') || 
+                        answer.includes('support') || 
+                        answer.includes('understand') || 
+                        answer.includes('care')) {
+                        isWinner = true;
+                    }
+                    
+                    // Ramil is always the winner in the story
+                    if (gameState.characterSelected === 'ramil') {
+                        isWinner = true;
+                    }
+                    
+                    if (isWinner) {
+                        // Player wins
+                        showModal('CONGRATULATIONS', 'Your answer has been selected as the most insightful. You have survived the School Trials.', 'See Ending', () => {
+                            window.location.href = 'ending.html';
+                        });
+                    } else {
+                        // Player loses
+                        showModal('TRIAL RESULTS', 'Your answer was not selected. Ramil has been chosen as the winner of the School Trials.', 'See Ending', () => {
+                            window.location.href = 'ending.html';
+                        });
+                    }
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html>

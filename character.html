@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Selection - SCHOOL TRIALS</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .character-card {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #333;
+            padding: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .character-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+            border-color: #900;
+        }
+        
+        .character-card.selected {
+            border: 2px solid #f00;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+        
+        .character-initial {
+            width: 60px;
+            height: 60px;
+            background-color: #222;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 auto 15px;
+            border: 1px solid #444;
+        }
+        
+        .character-name {
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        
+        .character-desc {
+            font-size: 14px;
+            color: #aaa;
+            text-align: center;
+        }
+        
+        .search-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .search-container input {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .search-container input:focus {
+            outline: none;
+            border-color: #900;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+        
+        .continue-btn {
+            margin-top: 30px;
+            padding: 12px 25px;
+            background-color: #900;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+        
+        .continue-btn:hover {
+            background-color: #c00;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+        }
+        
+        .continue-btn:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            color: #aaa;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .character-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body class="bg-black text-white font-mono">
+    <div class="container mx-auto px-4 py-8 min-h-screen">
+        <h1 class="text-4xl font-bold mb-8 text-center glitch-text">SELECT YOUR CHARACTER</h1>
+        
+        <div class="screen-flicker mb-8">
+            <p class="text-center text-gray-400 mb-4">Choose wisely. Your character will determine your strengths and weaknesses in the trials ahead.</p>
+        </div>
+        
+        <div class="mb-6">
+            <input type="text" id="search-input" placeholder="Search characters..." class="w-full p-3 bg-gray-900 border border-gray-700 text-white">
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12" id="character-grid">
+            <!-- Character 1 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="aades">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-red-900 rounded-full flex items-center justify-center text-2xl">A</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Aades</h3>
+                <p class="text-gray-400 mb-4">Just a friendly person</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 80%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 2 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="affan">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-blue-900 rounded-full flex items-center justify-center text-2xl">A</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Affan</h3>
+                <p class="text-gray-400 mb-4">Truthful sometimes</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 70%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 75%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 3 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="afnan">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-green-900 rounded-full flex items-center justify-center text-2xl">A</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Afnan</h3>
+                <p class="text-gray-400 mb-4">Class Clown's best friend</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 85%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 4 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="ahmad">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-yellow-900 rounded-full flex items-center justify-center text-2xl">A</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Ahmad</h3>
+                <p class="text-gray-400 mb-4">The Class Clown</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 55%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 90%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 5 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="arjun">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-purple-900 rounded-full flex items-center justify-center text-2xl">A</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Arjun</h3>
+                <p class="text-gray-400 mb-4">Clever, Friendly, but Silent</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 70%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 50%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 6 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="aryan">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-pink-900 rounded-full flex items-center justify-center text-2xl">A</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Aryan</h3>
+                <p class="text-gray-400 mb-4">Just a curious boy</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 70%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 7 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="asher">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-red-900 rounded-full flex items-center justify-center text-2xl">A</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Asher</h3>
+                <p class="text-gray-400 mb-4">Just a friendly person</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 80%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 8 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="aslam">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-blue-900 rounded-full flex items-center justify-center text-2xl">A</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Aslam</h3>
+                <p class="text-gray-400 mb-4">A naughty boy</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 70%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 9 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="badri">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-green-900 rounded-full flex items-center justify-center text-2xl">B</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Badri</h3>
+                <p class="text-gray-400 mb-4">Worst in everything</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 30%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 30%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 30%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 10 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="bilal">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-yellow-900 rounded-full flex items-center justify-center text-2xl">B</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Bilal</h3>
+                <p class="text-gray-400 mb-4">A naughty boy</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 70%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 11 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="danish-sheikh">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-purple-900 rounded-full flex items-center justify-center text-2xl">D</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Danish Sheikh</h3>
+                <p class="text-gray-400 mb-4">Very naughty boy</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 55%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 75%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 12 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="darshan">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-pink-900 rounded-full flex items-center justify-center text-2xl">D</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Darshan</h3>
+                <p class="text-gray-400 mb-4">Average person</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 50%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 13 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="ganet">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-red-900 rounded-full flex items-center justify-center text-2xl">G</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Ganet</h3>
+                <p class="text-gray-400 mb-4">Best Handwriting</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 70%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 65%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 14 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="hisham">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-blue-900 rounded-full flex items-center justify-center text-2xl">H</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Hisham</h3>
+                <p class="text-gray-400 mb-4">Best in Voice</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 85%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 15 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="isa">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-green-900 rounded-full flex items-center justify-center text-2xl">I</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Isa</h3>
+                <p class="text-gray-400 mb-4">Best at drawing and English</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 70%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 80%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 16 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="jafar">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-yellow-900 rounded-full flex items-center justify-center text-2xl">J</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Jafar</h3>
+                <p class="text-gray-400 mb-4">Good at Codes</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 60%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 17 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="jasmir">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-purple-900 rounded-full flex items-center justify-center text-2xl">J</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Jasmir</h3>
+                <p class="text-gray-400 mb-4">Ramil's friend</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 70%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 80%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 18 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="kevin">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-pink-900 rounded-full flex items-center justify-center text-2xl">K</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Kevin</h3>
+                <p class="text-gray-400 mb-4">Badri 2.0 but worse</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 20%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 25%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 20%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 19 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="ayaan-khazi">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-red-900 rounded-full flex items-center justify-center text-2xl">A</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Ayaan Khazi</h3>
+                <p class="text-gray-400 mb-4">Isa's friend</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 70%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 80%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 20 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="eshan">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-blue-900 rounded-full flex items-center justify-center text-2xl">E</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Eshan</h3>
+                <p class="text-gray-400 mb-4">Plays the class</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 70%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 85%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 21 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="illan">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-green-900 rounded-full flex items-center justify-center text-2xl">I</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Illan</h3>
+                <p class="text-gray-400 mb-4">Thinks like a King</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 75%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 22 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="zayaan">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-yellow-900 rounded-full flex items-center justify-center text-2xl">Z</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Zayaan</h3>
+                <p class="text-gray-400 mb-4">Also best at tech and drawing</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 70%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 23 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="ayaan-mirza">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-purple-900 rounded-full flex items-center justify-center text-2xl">A</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Ayaan Mirza</h3>
+                <p class="text-gray-400 mb-4">Best at Tech and Ideas</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 70%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 24 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="farhan">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-pink-900 rounded-full flex items-center justify-center text-2xl">F</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Farhan</h3>
+                <p class="text-gray-400 mb-4">Best friend of a Bad person</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 70%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 75%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 25 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="hillal">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-red-900 rounded-full flex items-center justify-center text-2xl">H</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Hillal</h3>
+                <p class="text-gray-400 mb-4">The worst Classmonitor</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 55%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 40%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 26 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="danish">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-blue-900 rounded-full flex items-center justify-center text-2xl">D</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Danish</h3>
+                <p class="text-gray-400 mb-4">Average person</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 50%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 27 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="najih">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-green-900 rounded-full flex items-center justify-center text-2xl">N</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Najih</h3>
+                <p class="text-gray-400 mb-4">Smart, fastest writer in class, powerful, Good at tech, friendship and science</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 80%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 28 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="raaz">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-yellow-900 rounded-full flex items-center justify-center text-2xl">R</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Raaz</h3>
+                <p class="text-gray-400 mb-4">Secretive boy, also the fastest writer</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 60%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 29 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="ramil">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-purple-900 rounded-full flex items-center justify-center text-2xl">R</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Ramil</h3>
+                <p class="text-gray-400 mb-4">Doesn't know how to use his IQ, but good at tricks</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 70%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 30 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="ridwaan">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-pink-900 rounded-full flex items-center justify-center text-2xl">R</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Ridwaan</h3>
+                <p class="text-gray-400 mb-4">Friendly but weak</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 40%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 85%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 31 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="rishan">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-red-900 rounded-full flex items-center justify-center text-2xl">R</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Rishan</h3>
+                <p class="text-gray-400 mb-4">Just an average person</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 50%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 32 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="ryan">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-blue-900 rounded-full flex items-center justify-center text-2xl">R</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Ryan</h3>
+                <p class="text-gray-400 mb-4">Friendly but bullied</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 75%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 33 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="shuhaib">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-green-900 rounded-full flex items-center justify-center text-2xl">S</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Shuhaib</h3>
+                <p class="text-gray-400 mb-4">Very Naughty</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 55%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 75%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Character 34 -->
+            <div class="character-card border border-red-800 p-4 cursor-pointer hover:bg-gray-900 transition-colors duration-300" data-character="yash">
+                <div class="character-portrait bg-gray-800 h-48 mb-4 flex items-center justify-center">
+                    <div class="w-24 h-24 bg-yellow-900 rounded-full flex items-center justify-center text-2xl">Y</div>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Yash</h3>
+                <p class="text-gray-400 mb-4">Naughtiest</p>
+                <div class="stats grid grid-cols-3 gap-2 mb-4">
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">LOGIC</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">REFLEX</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-xs text-gray-500">SOCIAL</div>
+                        <div class="stat-bar h-2 bg-gray-800 mt-1">
+                            <div class="h-full bg-red-600" style="width: 85%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center">
+            <button id="confirm-selection" class="game-btn px-8 py-4 text-xl bg-red-900 hover:bg-red-700 transition-colors duration-300 rounded-sm hidden">CONFIRM SELECTION</button>
+        </div>
+        
+        <div class="fixed bottom-4 right-4 flex space-x-4">
+            <button id="sound-toggle" class="px-3 py-1 bg-gray-800 rounded-sm">🔊</button>
+            <button id="music-toggle" class="px-3 py-1 bg-gray-800 rounded-sm">♪ ON</button>
+        </div>
+    </div>
+    
+    <script src="scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load game state
+            loadGameState();
+            
+            // Play menu music
+            playMusic('sounds/menu_theme.mp3');
+            
+            // Character selection
+            const characterCards = document.querySelectorAll('.character-card');
+            const confirmButton = document.getElementById('confirm-selection');
+            const searchInput = document.getElementById('search-input');
+            let selectedCharacter = null;
+            
+            // Add click event to character cards
+            characterCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    playSound('sounds/click.mp3');
+                    
+                    // Remove selected class from all cards
+                    characterCards.forEach(c => c.classList.remove('bg-gray-900', 'border-red-500'));
+                    
+                    // Add selected class to clicked card
+                    this.classList.add('bg-gray-900', 'border-red-500');
+                    
+                    // Store selected character
+                    selectedCharacter = this.dataset.character;
+                    
+                    // Show confirm button
+                    confirmButton.classList.remove('hidden');
+                });
+            });
+            
+            // Search functionality
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                characterCards.forEach(card => {
+                    const name = card.querySelector('h3').textContent.toLowerCase();
+                    const description = card.querySelector('p').textContent.toLowerCase();
+                    
+                    if (name.includes(searchTerm) || description.includes(searchTerm)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Confirm selection
+            confirmButton.addEventListener('click', function() {
+                if (!selectedCharacter) return;
+                
+                playSound('sounds/click.mp3');
+                
+                // Save character selection
+                gameState.characterSelected = selectedCharacter;
+                gameState.currentChapter = 'chapterone';
+                saveGameState();
+                
+                // Redirect to first chapter
+                window.location.href = 'chapterone.html';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Trials - Chapter 1: Jot Thought Blitz</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .trial-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 128, 0, 0.5);
+        }
+        
+        .prompt {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #22c55e;
+        }
+        
+        .answer-input {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .answer-input span {
+            background-color: #22c55e;
+            color: black;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .answer-input input {
+            flex: 1;
+            padding: 8px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid #22c55e;
+            color: white;
+            border-radius: 5px;
+        }
+        
+        .timer {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #22c55e;
+        }
+        
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .submit-btn {
+            background-color: #22c55e;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            background-color: #16a34a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SCHOOL TRIALS</h1>
+        </header>
+        
+        <main>
+            <section id="story" class="story-section">
+                <h2>Chapter 1: Attendance</h2>
+                <div class="story-text">
+                    <p>The sky was the color of rusted iron, just before dawn. Clouds hung low over the city — thick, unmoving, like the sky itself had stopped breathing.</p>
+                    <p>Ten long, boxy buses — identical, matte black — slid through the empty streets like shadows. No logos. No windows.</p>
+                    <p>Inside each bus, students sat silently. Every student wore the same uniform: A green shirt, a dark green coat, and dark green pants.</p>
+                    <p>As the buses left the city, the rain grew heavier. They drove into forest. Then fog. Then silence.</p>
+                    <p>The gates slid open without a sound. The buses rolled in.</p>
+                    <p>You were led down a long corridor — walls smooth and black, like obsidian. Finally, the hallway opened into a colossal chamber with 310 desks.</p>
+                </div>
+                <button id="start-trial" class="action-button">BEGIN TRIAL ONE</button>
+            </section>
+            
+            <section id="trial" class="trial-section hidden">
+                <h2>TRIAL ONE: JOT THOUGHT BLITZ</h2>
+                <p class="instructions">You will be given 1 minute to write three valid answers to each prompt. Invalid, blank, or duplicate entries will result in elimination.</p>
+                
+                <div class="trial-container">
+                    <div class="progress">
+                        <span id="prompt-counter">Prompt 1 of 10</span>
+                        <span id="timer" class="timer">60</span>
+                    </div>
+                    
+                    <div id="prompt" class="prompt">Name three fruits that are red.</div>
+                    
+                    <div class="answers">
+                        <div class="answer-input">
+                            <span>1</span>
+                            <input type="text" id="answer1" placeholder="Type your answer...">
+                        </div>
+                        <div class="answer-input">
+                            <span>2</span>
+                            <input type="text" id="answer2" placeholder="Type your answer...">
+                        </div>
+                        <div class="answer-input">
+                            <span>3</span>
+                            <input type="text" id="answer3" placeholder="Type your answer...">
+                        </div>
+                    </div>
+                    
+                    <button id="submit-answers" class="submit-btn">SUBMIT</button>
+                </div>
+            </section>
+            
+            <section id="results" class="results-section hidden">
+                <h2>TRIAL COMPLETE</h2>
+                <p class="survivors-count">184 Remain</p>
+                <p>From 310 to 184. Nearly half are gone.</p>
+                <button id="continue-btn" class="action-button">CONTINUE TO CHAPTER 2</button>
+            </section>
+            
+            <section id="game-over" class="game-over-section hidden">
+                <h2>ELIMINATED</h2>
+                <p>Your answers were invalid or incomplete.</p>
+                <button onclick="window.location.href='failure.html'" class="action-button">CONTINUE</button>
+            </section>
+        </main>
+    </div>
+    
+    <script>
+        // Trial prompts
+        const prompts = [
+            { id: 1, text: "Name three fruits that are red." },
+            { id: 2, text: "Name three animals that can swim." },
+            { id: 3, text: "Name three items in a pencil case." },
+            { id: 4, text: "Name three shapes with corners." },
+            { id: 5, text: "Name three things found in a park." },
+            { id: 6, text: "Name three body parts you have two of." },
+            { id: 7, text: "Name three school subjects." },
+            { id: 8, text: "Name three things that can fly." },
+            { id: 9, text: "Name three vegetables that grow underground." },
+            { id: 10, text: "Name three things that are cold." }
+        ];
+        
+        // Valid answers for each prompt
+        const validAnswers = {
+            1: ["apple", "cherry", "strawberry", "watermelon", "pomegranate", "raspberry", "tomato", "cranberry", "red grapes"],
+            2: ["fish", "dolphin", "crocodile", "shark", "whale", "turtle", "frog", "seal", "penguin", "otter"],
+            3: ["pen", "pencil", "eraser", "sharpener", "ruler", "compass", "highlighter", "marker", "scissors"],
+            4: ["square", "triangle", "rectangle", "pentagon", "hexagon", "octagon", "cube", "pyramid", "diamond"],
+            5: ["tree", "bench", "slide", "swing", "fountain", "statue", "path", "flower", "grass", "pond"],
+            6: ["eyes", "ears", "hands", "feet", "legs", "arms", "eyebrows", "lungs", "kidneys", "nostrils"],
+            7: ["math", "english", "science", "history", "geography", "art", "music", "pe", "physics", "chemistry"],
+            8: ["bird", "airplane", "kite", "butterfly", "bee", "bat", "helicopter", "rocket", "drone", "balloon"],
+            9: ["carrot", "potato", "onion", "garlic", "radish", "turnip", "beetroot", "ginger", "yam", "sweet potato"],
+            10: ["ice", "snow", "freezer", "fridge", "winter", "antarctica", "ice cream", "popsicle", "cold water", "air conditioner"]
+        };
+        
+        let currentPrompt = 0;
+        let timeLeft = 60;
+        let timerInterval;
+        
+        // DOM elements
+        const storySection = document.getElementById('story');
+        const trialSection = document.getElementById('trial');
+        const resultsSection = document.getElementById('results');
+        const gameOverSection = document.getElementById('game-over');
+        const startTrialBtn = document.getElementById('start-trial');
+        const promptElement = document.getElementById('prompt');
+        const promptCounter = document.getElementById('prompt-counter');
+        const timerElement = document.getElementById('timer');
+        const answer1Input = document.getElementById('answer1');
+        const answer2Input = document.getElementById('answer2');
+        const answer3Input = document.getElementById('answer3');
+        const submitBtn = document.getElementById('submit-answers');
+        const continueBtn = document.getElementById('continue-btn');
+        
+        // Start trial
+        startTrialBtn.addEventListener('click', function() {
+            storySection.classList.add('hidden');
+            trialSection.classList.remove('hidden');
+            startTimer();
+            loadPrompt();
+        });
+        
+        // Load prompt
+        function loadPrompt() {
+            if (currentPrompt >= prompts.length) {
+                completeTrial(true);
+                return;
+            }
+            
+            const prompt = prompts[currentPrompt];
+            promptElement.textContent = prompt.text;
+            promptCounter.textContent = `Prompt ${currentPrompt + 1} of ${prompts.length}`;
+            
+            // Clear inputs
+            answer1Input.value = '';
+            answer2Input.value = '';
+            answer3Input.value = '';
+            
+            // Focus on first input
+            answer1Input.focus();
+            
+            // Reset timer
+            timeLeft = 60;
+            timerElement.textContent = timeLeft;
+        }
+        
+        // Start timer
+        function startTimer() {
+            timerInterval = setInterval(function() {
+                timeLeft--;
+                timerElement.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    validateAnswers();
+                }
+                
+                // Change color when time is running low
+                if (timeLeft <= 10) {
+                    timerElement.style.color = '#ef4444';
+                } else {
+                    timerElement.style.color = '#22c55e';
+                }
+            }, 1000);
+        }
+        
+        // Submit answers
+        submitBtn.addEventListener('click', validateAnswers);
+        
+        // Validate answers
+        function validateAnswers() {
+            clearInterval(timerInterval);
+            
+            const answers = [
+                answer1Input.value.trim().toLowerCase(),
+                answer2Input.value.trim().toLowerCase(),
+                answer3Input.value.trim().toLowerCase()
+            ];
+            
+            // Check if all answers are provided
+            if (answers.some(answer => answer === '')) {
+                completeTrial(false);
+                return;
+            }
+            
+            // Check for duplicates
+            const uniqueAnswers = new Set(answers);
+            if (uniqueAnswers.size !== 3) {
+                completeTrial(false);
+                return;
+            }
+            
+            // Check if answers are valid
+            const promptId = prompts[currentPrompt].id;
+            const valid = answers.every(answer => 
+                validAnswers[promptId].includes(answer)
+            );
+            
+            if (!valid) {
+                completeTrial(false);
+                return;
+            }
+            
+            // Move to next prompt
+            currentPrompt++;
+            
+            if (currentPrompt >= prompts.length) {
+                completeTrial(true);
+            } else {
+                loadPrompt();
+                startTimer();
+            }
+        }
+        
+        // Complete trial
+        function completeTrial(success) {
+            clearInterval(timerInterval);
+            trialSection.classList.add('hidden');
+            
+            if (success) {
+                resultsSection.classList.remove('hidden');
+            } else {
+                gameOverSection.classList.remove('hidden');
+            }
+        }
+        
+        // Continue to next chapter
+        continueBtn.addEventListener('click', function() {
+            window.location.href = 'chaptertwo.html';
+        });
+        
+        // Handle Enter key for inputs
+        answer1Input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                answer2Input.focus();
+            }
+        });
+        
+        answer2Input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                answer3Input.focus();
+            }
+        });
+        
+        answer3Input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                validateAnswers();
+            }
+        });
+    </script>
+</body>
+</html>

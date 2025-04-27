@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Trials - Special Failure</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .failure-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .failure-title {
+            font-size: 36px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #f00;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+            animation: flicker 2s infinite;
+        }
+        
+        @keyframes flicker {
+            0% { opacity: 1; }
+            5% { opacity: 0.8; }
+            10% { opacity: 1; }
+            15% { opacity: 0.3; }
+            20% { opacity: 1; }
+            25% { opacity: 0.8; }
+            30% { opacity: 1; }
+            35% { opacity: 0.6; }
+            40% { opacity: 1; }
+            45% { opacity: 0.9; }
+            50% { opacity: 1; }
+            55% { opacity: 0.7; }
+            60% { opacity: 1; }
+            100% { opacity: 1; }
+        }
+        
+        .failure-text {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .restart-btn {
+            display: block;
+            width: 200px;
+            margin: 40px auto;
+            padding: 15px;
+            background-color: #900;
+            color: white;
+            text-align: center;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .restart-btn:hover {
+            background-color: #c00;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+        }
+        
+        .special-message {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-left: 3px solid #900;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="game-title">SCHOOL TRIALS</h1>
+        
+        <div class="failure-container">
+            <h2 class="failure-title">SPECIAL ELIMINATION</h2>
+            
+            <p class="failure-text">
+                The principal's voice crackles over the intercom, different from the usual mechanical tone.
+            </p>
+            
+            <p class="failure-text">
+                "We have detected an attempt to break the rules of the School Trials. This is unacceptable."
+            </p>
+            
+            <p class="failure-text">
+                The lights flicker and dim. The other students back away from you, fear in their eyes.
+            </p>
+            
+            <p class="failure-text">
+                "Rule-breakers face a special elimination. They are removed not just from the trials, but from the memory of the trials."
+            </p>
+            
+            <p class="failure-text">
+                The floor beneath you begins to dissolve, not opening but disintegrating. You feel yourself fading, becoming less substantial.
+            </p>
+            
+            <p class="failure-text">
+                The last thing you hear is the principal's voice: "Let this be a lesson to the others. The rules exist for a reason."
+            </p>
+            
+            <div class="special-message">
+                <p>You have encountered a special elimination due to breaking a fundamental rule of the trials.</p>
+                <p>Sometimes the only way to win is to play by the rules.</p>
+            </div>
+            
+            <button class="restart-btn" onclick="location.href='index.html'">START OVER</button>
+        </div>
+    </div>
+    
+    <audio id="background-music" loop>
+        <source src="music/tension-theme.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Play background music
+            const backgroundMusic = document.getElementById('background-music');
+            backgroundMusic.volume = 0.3;
+            backgroundMusic.play().catch(e => console.log("Audio autoplay was prevented:", e));
+            
+            // Add sound toggle
+            const soundToggle = document.createElement('div');
+            soundToggle.className = 'sound-toggle';
+            soundToggle.innerHTML = '🔊';
+            soundToggle.style.position = 'fixed';
+            soundToggle.style.top = '20px';
+            soundToggle.style.right = '20px';
+            soundToggle.style.fontSize = '24px';
+            soundToggle.style.cursor = 'pointer';
+            soundToggle.style.zIndex = '1000';
+            document.body.appendChild(soundToggle);
+            
+            let soundOn = true;
+            soundToggle.addEventListener('click', function() {
+                soundOn = !soundOn;
+                if (soundOn) {
+                    backgroundMusic.play();
+                    soundToggle.innerHTML = '🔊';
+                } else {
+                    backgroundMusic.pause();
+                    soundToggle.innerHTML = '🔇';
+                }
+            });
+            
+            // Reset game state for new game
+            localStorage.removeItem('gameState');
+            
+            // Add glitch effects to the page
+            setInterval(() => {
+                document.body.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
+                setTimeout(() => {
+                    document.body.style.filter = 'none';
+                }, 100);
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

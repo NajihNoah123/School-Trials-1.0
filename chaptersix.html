@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 6: Shadows of Strategy - SCHOOL TRIALS</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-black text-white font-mono">
+    <div class="container mx-auto px-4 py-8 min-h-screen">
+        <h1 class="text-4xl font-bold mb-8 text-center glitch-text">CHAPTER 6: SHADOWS OF STRATEGY</h1>
+        
+        <section id="story" class="story-section mb-12">
+            <div class="story-text max-w-3xl mx-auto">
+                <p>The remaining 87 students who chose to continue were led to a new wing of the facility. The hallway was narrower here, the ceiling lower. The air felt thicker, harder to breathe.</p>
+                
+                <p>Fluorescent lights flickered overhead, casting strange, elongated shadows on the walls. The shadows seemed to move independently of their owners, stretching and contracting as if alive.</p>
+                
+                <p>"I don't like this place," whispered Ahmad, his voice barely audible. "It feels... wrong."</p>
+                
+                <p>Najih nodded silently, his eyes fixed on the shadows. "They're watching us."</p>
+                
+                <p>At the end of the hallway stood a row of identical doors, each bearing a number. The mechanical voice returned, echoing through the corridor.</p>
+                
+                <p><strong>TRIAL SIX: PAIRED PUZZLE CHALLENGE</strong></p>
+                
+                <p>"For this trial, you will be paired with an AI partner. Together, you must solve a series of increasingly complex puzzles. Communication is key. Those who fail to complete all puzzles within the time limit will be eliminated."</p>
+                
+                <p>The students exchanged nervous glances. An AI partner? What did that mean?</p>
+                
+                <p>"Your partner awaits you inside. Begin when ready."</p>
+                
+                <p>One by one, the students approached their assigned doors. As you reached for the handle of door number 42, you could have sworn you saw your shadow reach for it first.</p>
+            </div>
+            <div class="text-center mt-8">
+                <button id="continue-to-trial" class="game-btn px-8 py-3 text-xl bg-red-900 hover:bg-red-700 transition-colors duration-300 rounded-sm">ENTER ROOM</button>
+            </div>
+        </section>
+        
+        <div id="trial-section" class="hidden">
+            <div class="survivor-count text-center mb-6" id="survivor-count">32 students remain</div>
+            
+            <div class="trial-container screen-flicker">
+                <div class="trial-title">TRIAL SIX: PAIRED PUZZLE CHALLENGE</div>
+                
+                <div class="trial-description mb-8">
+                    <p>You have been paired with an AI partner to solve a series of puzzles.</p>
+                    <p>Communication is key - you must work together to succeed.</p>
+                    <p>You have 5 minutes to solve all puzzles.</p>
+                    <p>Failure to complete all puzzles will result in elimination.</p>
+                </div>
+                
+                <div class="timer text-center mb-8" id="timer">05:00</div>
+                
+                <div class="puzzle-container bg-gray-900 border border-red-900 p-4 mb-8">
+                    <div class="flex justify-between mb-4">
+                        <span>Puzzle: <span id="puzzle-number">1</span>/5</span>
+                        <span id="puzzle-type">Logic Puzzle</span>
+                    </div>
+                    
+                    <div id="puzzle-description" class="text-xl mb-4">
+                        Loading puzzle...
+                    </div>
+                    
+                    <div id="puzzle-options" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <!-- Options will be populated dynamically -->
+                    </div>
+                    
+                    <div id="ai-partner" class="bg-gray-800 border border-blue-900 p-4 mb-4">
+                        <div class="flex items-center mb-2">
+                            <div class="w-8 h-8 bg-blue-600 mr-2"></div>
+                            <span class="font-bold">AI Partner</span>
+                        </div>
+                        <div id="ai-message" class="italic">
+                            I'm ready to help you solve these puzzles. Let's work together!
+                        </div>
+                    </div>
+                    
+                    <div id="user-input-container" class="mb-4">
+                        <input type="text" id="user-input" class="w-full bg-gray-800 border border-red-900 p-2 text-white" placeholder="Type your answer or ask your AI partner for help...">
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <button id="ask-ai" class="game-btn px-4 py-2 bg-blue-900 hover:bg-blue-700 transition-colors duration-300 rounded-sm">ASK AI</button>
+                        <button id="submit-answer" class="game-btn px-4 py-2 bg-red-900 hover:bg-red-700 transition-colors duration-300 rounded-sm">SUBMIT ANSWER</button>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <button id="start-trial" class="game-btn px-8 py-3 text-xl bg-red-900 hover:bg-red-700 transition-colors duration-300 rounded-sm">START TRIAL</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="fixed bottom-4 right-4 flex space-x-4">
+            <button id="sound-toggle" class="px-3 py-1 bg-gray-800 rounded-sm">🔊</button>
+            <button id="music-toggle" class="px-3 py-1 bg-gray-800 rounded-sm">♪ ON</button>
+        </div>
+    </div>
+    
+    <script src="scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load game state
+            loadGameState();
+            gameState.survivorCount = 32; // Set for this chapter
+            updateSurvivorCount();
+            
+            // Play ambient music
+            playMusic('sounds/tension_theme.mp3');
+            
+            // Continue to trial button
+            document.getElementById('continue-to-trial').addEventListener('click', function() {
+                playSound('sounds/click.mp3');
+                document.getElementById('story').classList.add('hidden');
+                document.getElementById('trial-section').classList.remove('hidden');
+            });
+            
+            // Trial elements
+            const startButton = document.getElementById('start-trial');
+            const askAIButton = document.getElementById('ask-ai');
+            const submitButton = document.getElementById('submit-answer');
+            const puzzleContainer = document.querySelector('.puzzle-container');
+            const puzzleNumber = document.getElementById('puzzle-number');
+            const puzzleType = document.getElementById('puzzle-type');
+            const puzzleDescription = document.getElementById('puzzle-description');
+            const puzzleOptions = document.getElementById('puzzle-options');
+            const aiMessage = document.getElementById('ai-message');
+            const userInput = document.getElementById('user-input');
+            
+            // Hide puzzle container initially
+            puzzleContainer.classList.add('hidden');
+            
+            // Puzzles data
+            const puzzles = [
+                {
+                    type: "Logic Puzzle",
+                    description: "If all Blips are Bloops, and some Bloops are Bleeps, then which of the following must be true?",
+                    options: [
+                        "All Blips are Bleeps",
+                        "Some Blips are Bleeps",
+                        "No Blips are Bleeps",
+                        "None of the above"
+                    ],
+                    correctAnswer: "Some Blips are Bleeps",
+                    aiHints: [
+                        "Let's think about this logically. We know that all Blips are Bloops.",
+                        "And we know that some Bloops are Bleeps. This means there's an overlap between Bloops and Bleeps.",
+                        "Since all Blips are Bloops, and some Bloops are Bleeps, there's a possibility that some Blips are also Bleeps.",
+                        "The correct answer is 'Some Blips are Bleeps' because it's the only option that could be true based on the given information."
+                    ]
+                },
+                {
+                    type: "Pattern Recognition",
+                    description: "What comes next in the sequence: 2, 6, 12, 20, ?",
+                    options: [
+                        "30",
+                        "28",
+                        "32",
+                        "24"
+                    ],
+                    correctAnswer: "30",
+                    aiHints: [
+                        "Let's analyze the pattern in this sequence: 2, 6, 12, 20, ?",
+                        "The differences between consecutive numbers are: 4, 6, 8...",
+                        "I notice that these differences increase by 2 each time: +4, then +6, then +8.",
+                        "So the next difference should be +10, and 20 + 10 = 30. The answer is 30."
+                    ]
+                },
+                {
+                    type: "Word Puzzle",
+                    description: "Find the word that connects these three: TRAP, MAIL, BOARD",
+                    options: [
+                        "LETTER",
+                        "GAME",
+                        "SPRING",
+                        "POST"
+                    ],
+                    correctAnswer: "SPRING",
+                    aiHints: [
+                        "We need to find a word that can be paired with each of the given words to form new compound words or phrases.",
+                        "Let's try SPRING: SPRING TRAP, SPRING MAIL, SPRING BOARD.",
+                        "Yes, all of these work! SPRING TRAP is a type of trap, SPRING MAIL refers to mail sent in spring, and SPRINGBOARD is a diving board.",
+                        "The answer is SPRING because it can be paired with all three words."
+                    ]
+                },
+                {
+                    type: "Mathematical Puzzle",
+                    description: "If 3♦4 = 7 and 5♦2 = 7, then what is 6♦3?",
+                    options: [
+                        "9",
+                        "18",
+                        "3",
+                        "8"
+                    ],
+                    correctAnswer: "9",
+                    aiHints: [
+                        "Let's figure out what operation ♦ represents by looking at the examples.",
+                        "We have 3♦4 = 7 and 5♦2 = 7. What operation gives us these results?",
+                        "It looks like 3+4=7 and 5+2=7, so ♦ might represent addition.",
+                        "If ♦ means addition, then 6♦3 would be 6+3=9. The answer is 9."
+                    ]
+                },
+                {
+                    type: "Riddle",
+                    description: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?",
+                    options: [
+                        "Echo",
+                        "Shadow",
+                        "Thought",
+                        "Cloud"
+                    ],
+                    correctAnswer: "Echo",
+                    aiHints: [
+                        "This is a classic riddle. Let's break it down:",
+                        "'I speak without a mouth' - something that makes sound but doesn't have a mouth.",
+                        "'I hear without ears' - something that seems to respond to sound but doesn't have ears.",
+                        "'I have no body, but I come alive with wind' - something intangible that's carried by air.",
+                        "An echo speaks (repeats sounds) without a mouth, seems to hear (responds to) sounds without ears, has no physical form, and is carried by air waves. The answer is Echo."
+                    ]
+                }
+            ];
+            
+            let currentPuzzleIndex = 0;
+            let currentHintIndex = 0;
+            
+            // Start trial
+            startButton.addEventListener('click', function() {
+                playSound('sounds/click.mp3');
+                startButton.classList.add('hidden');
+                puzzleContainer.classList.remove('hidden');
+                
+                // Start timer
+                startTimer(5 * 60, function() {
+                    // Time's up
+                    gameOver('You ran out of time to solve the puzzles.');
+                });
+                
+                // Show first puzzle
+                showPuzzle(0);
+            });
+            
+            // Ask AI for help
+            askAIButton.addEventListener('click', function() {
+                playSound('sounds/click.mp3');
+                
+                // Get current puzzle
+                const puzzle = puzzles[currentPuzzleIndex];
+                
+                // Show AI hint
+                if (currentHintIndex < puzzle.aiHints.length) {
+                    aiMessage.textContent = puzzle.aiHints[currentHintIndex];
+                    currentHintIndex++;
+                } else {
+                    aiMessage.textContent = "I've given you all the hints I can for this puzzle. Let's try to solve it now!";
+                }
+            });
+            
+            // Submit answer
+            submitButton.addEventListener('click', function() {
+                // Get current puzzle
+                const puzzle = puzzles[currentPuzzleIndex];
+                
+                // Get selected option or text input
+                let userAnswer;
+                const selectedOption = document.querySelector('.puzzle-option.selected');
+                
+                if (selectedOption) {
+                    userAnswer = selectedOption.textContent;
+                } else {
+                    userAnswer = userInput.value.trim();
+                }
+                
+                // Check answer
+                if (userAnswer.toLowerCase() === puzzle.correctAnswer.toLowerCase()) {
+                    // Correct answer
+                    playSound('sounds/success.mp3');
+                    aiMessage.textContent = "Great job! That's correct!";
+                    
+                    // Move to next puzzle
+                    setTimeout(() => {
+                        currentPuzzleIndex++;
+                        currentHintIndex = 0;
+                        
+                        if (currentPuzzleIndex >= puzzles.length) {
+                            // All puzzles completed
+                            completeTrial();
+                        } else {
+                            // Show next puzzle
+                            showPuzzle(currentPuzzleIndex);
+                        }
+                    }, 1500);
+                } else {
+                    // Incorrect answer
+                    playSound('sounds/failure.mp3');
+                    aiMessage.textContent = "That doesn't seem right. Let's think about this again. Would you like a hint?";
+                }
+            });
+            
+            // Show puzzle
+            function showPuzzle(index) {
+                const puzzle = puzzles[index];
+                
+                // Update puzzle info
+                puzzleNumber.textContent = index + 1;
+                puzzleType.textContent = puzzle.type;
+                puzzleDescription.textContent = puzzle.description;
+                
+                // Clear user input
+                userInput.value = '';
+                
+                // Clear options
+                puzzleOptions.innerHTML = '';
+                
+                // Add options
+                puzzle.options.forEach(option => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'puzzle-option p-3 bg-gray-800 hover:bg-gray-700 border border-gray-600 cursor-pointer';
+                    optionElement.textContent = option;
+                    
+                    // Option click event
+                    optionElement.addEventListener('click', function() {
+                        // Remove selected class from all options
+                        document.querySelectorAll('.puzzle-option').forEach(opt => {
+                            opt.classList.remove('selected', 'bg-red-900', 'border-red-600');
+                            opt.classList.add('bg-gray-800', 'border-gray-600');
+                        });
+                        
+                        // Add selected class to clicked option
+                        this.classList.remove('bg-gray-800', 'border-gray-600');
+                        this.classList.add('selected', 'bg-red-900', 'border-red-600');
+                        
+                        playSound('sounds/click.mp3');
+                    });
+                    
+                    puzzleOptions.appendChild(optionElement);
+                });
+                
+                // Reset AI message
+                aiMessage.textContent = "I'm ready to help with this puzzle. What do you think the answer might be?";
+            }
+            
+            // Complete trial
+            function completeTrial() {
+                // Hide puzzle container
+                puzzleContainer.classList.add('hidden');
+                
+                // Show completion message
+                const trialContainer = document.querySelector('.trial-container');
+                const completionElement = document.createElement('div');
+                completionElement.className = 'completion-message mb-8 p-4 bg-gray-900 border border-green-900 text-center';
+                completionElement.innerHTML = `
+                    <h3 class="text-xl mb-4 text-green-500">All Puzzles Completed!</h3>
+                    <p class="mb-4">You and your AI partner have successfully solved all the puzzles.</p>
+                    <p class="text-lg">You may proceed to the next trial.</p>
+                `;
+                trialContainer.appendChild(completionElement);
+                
+                // Show continue button
+                const continueButton = document.createElement('button');
+                continueButton.className = 'game-btn px-8 py-3 text-xl bg-green-900 hover:bg-green-700 transition-colors duration-300 rounded-sm mt-4';
+                continueButton.textContent = 'CONTINUE';
+                completionElement.appendChild(continueButton);
+                
+                // Continue button click
+                continueButton.addEventListener('click', function() {
+                    playSound('sounds/click.mp3');
+                    
+                    // Calculate elimination
+                    const eliminationRate = 0.4; // 40% elimination
+                    const eliminated = Math.floor(gameState.survivorCount * eliminationRate);
+                    const remaining = gameState.survivorCount - eliminated;
+                    
+                    // Proceed to next chapter
+                    trialSuccess(remaining, 'chapterseven.html');
+                });
+                
+                // Play success sound
+                playSound('sounds/success.mp3');
+            }
+        });
+    </script>
+</body>
+</html>

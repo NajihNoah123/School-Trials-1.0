@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Trials - Chapter 5: The Vote</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .trial-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 128, 0, 0.5);
+        }
+        
+        .vote-options {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .vote-option {
+            flex: 1;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .vote-option:hover {
+            transform: translateY(-5px);
+        }
+        
+        .vote-option.continue {
+            background-color: rgba(34, 197, 94, 0.2);
+        }
+        
+        .vote-option.continue:hover {
+            background-color: rgba(34, 197, 94, 0.3);
+        }
+        
+        .vote-option.leave {
+            background-color: rgba(239, 68, 68, 0.2);
+        }
+        
+        .vote-option.leave:hover {
+            background-color: rgba(239, 68, 68, 0.3);
+        }
+        
+        .vote-option.selected {
+            border-color: white;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+        
+        .vote-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .vote-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .vote-description {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+        
+        .vote-counts {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .vote-count {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .vote-count-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .continue-icon {
+            background-color: #22c55e;
+            color: black;
+        }
+        
+        .leave-icon {
+            background-color: #ef4444;
+            color: black;
+        }
+        
+        .vote-visualization {
+            height: 30px;
+            background-color: #222;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            display: flex;
+        }
+        
+        .vote-bar-continue {
+            height: 100%;
+            background-color: #22c55e;
+            transition: width 0.5s;
+        }
+        
+        .vote-bar-leave {
+            height: 100%;
+            background-color: #ef4444;
+            transition: width 0.5s;
+        }
+        
+        .timer {
+            font-size: 1.5rem;
+            text-align: right;
+            margin-bottom: 10px;
+            color: #22c55e;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .final-decision {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        
+        .decision-box {
+            background-color: #222;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        .decision-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .decision-text {
+            margin-bottom: 30px;
+            color: #ccc;
+        }
+        
+        .decision-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .decision-btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+        }
+        
+        .continue-btn {
+            background-color: #22c55e;
+            color: black;
+        }
+        
+        .leave-btn {
+            background-color: #ef4444;
+            color: black;
+        }
+
+        .vote-activity {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: #aaa;
+            animation: fadeOut 1.5s forwards;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        .vote-activity-container {
+            position: relative;
+            height: 0;
+        }
+        
+        .vote-activity-list {
+            max-height: 150px;
+            overflow-y: auto;
+            margin-top: 10px;
+            padding: 5px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            font-size: 0.8rem;
+        }
+        
+        .vote-activity-item {
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .vote-activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .continue-vote {
+            color: #22c55e;
+        }
+        
+        .leave-vote {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SCHOOL TRIALS</h1>
+        </header>
+        
+        <main>
+            <section id="story" class="story-section">
+                <h2>Chapter 5: The Vote</h2>
+                <div class="story-text">
+                    <p>The remaining 87 students were gathered in a large circular chamber. The walls were lined with screens, each displaying a countdown timer: 01:00.</p>
+                    <p>A voice echoed through the chamber, different from before. Softer. Almost sympathetic.</p>
+                    <p>"You have proven yourselves capable. Resilient. But the trials will only grow more difficult from here. More... lethal."</p>
+                    <p>The screens flickered, showing images of the outside world. Sunlight. Trees. Freedom.</p>
+                    <p>"We offer you a choice. Vote to continue the trials, or vote to leave. If the majority votes to leave, all remaining participants will be released. If the vote is tied, the final decision will fall to one of you."</p>
+                    <p>Whispers erupted among the students. Was this a trick? Another test? Or a genuine chance at freedom?</p>
+                    <p>"The vote will be anonymous. You have 1 minute to decide."</p>
+                </div>
+                <button id="start-trial" class="action-button">BEGIN VOTING</button>
+            </section>
+            
+            <section id="trial" class="trial-section hidden">
+                <h2>THE VOTE</h2>
+                <p class="instructions">The fate of all remaining students rests on this decision. Will you continue the trials or choose freedom?</p>
+                
+                <div class="trial-container">
+                    <div class="stats">
+                        <div class="vote-counts">
+                            <div class="vote-count">
+                                <div class="vote-count-icon continue-icon">✓</div>
+                                <span id="continue-count">0</span>
+                            </div>
+                            <div class="vote-count">
+                                <div class="vote-count-icon leave-icon">✗</div>
+                                <span id="leave-count">0</span>
+                            </div>
+                        </div>
+                        <span id="timer" class="timer">01:00</span>
+                    </div>
+                    
+                    <div class="vote-options">
+                        <div id="continue-option" class="vote-option continue">
+                            <div class="vote-icon">✓</div>
+                            <div class="vote-title">Continue Trials</div>
+                            <div class="vote-description">Press forward with the trials to discover what lies at the end.</div>
+                        </div>
+                        
+                        <div id="leave-option" class="vote-option leave">
+                            <div class="vote-icon">✗</div>
+                            <div class="vote-title">Leave Now</div>
+                            <div class="vote-description">End the trials and return to the outside world.</div>
+                        </div>
+                    </div>
+                    
+                    <div id="vote-message" class="vote-message"></div>
+                    
+                    <div class="vote-visualization">
+                        <div id="vote-bar-continue" class="vote-bar-continue" style="width: 0%"></div>
+                        <div id="vote-bar-leave" class="vote-bar-leave" style="width: 0%"></div>
+                    </div>
+                    
+                    <div class="stats">
+                        <span>Votes Cast</span>
+                        <span id="votes-cast">0/87</span>
+                    </div>
+
+                    <div id="vote-activity-container" class="vote-activity-container"></div>
+                    
+                    <div class="vote-activity-list" id="vote-activity-list">
+                        <div class="vote-activity-item">Voting has begun...</div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="results" class="results-section hidden">
+                <h2>VOTE COMPLETE</h2>
+                <p id="decision-text" class="decision-text">Decision: CONTINUE THE TRIALS</p>
+                <p id="outcome-text">The trials will continue. The path to victory narrows further.</p>
+                <button id="continue-btn" class="action-button">CONTINUE TO CHAPTER 6</button>
+            </section>
+            
+            <div id="final-decision" class="final-decision">
+                <div class="decision-box">
+                    <h3 class="decision-title">The Vote Is Tied</h3>
+                    <p class="decision-text">The vote is exactly tied. As a key participant, you must make the final decision for everyone.</p>
+                    <div class="decision-buttons">
+                        <button id="final-continue" class="decision-btn continue-btn">Continue Trials</button>
+                        <button id="final-leave" class="decision-btn leave-btn">Leave Now</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        let continueVotes = 0;
+        let leaveVotes = 0;
+        let playerVoted = false;
+        let playerVote = null;
+        let timeLeft = 60; // 1 minute in seconds
+        let timerInterval;
+        let votingComplete = false;
+        let totalVoters = 87;
+        let voteHistory = [];
+        let voteActivityTimeout = null;
+        
+        // Student names for vote activity
+        const studentNames = [
+            "Aiko", "Takashi", "Yumi", "Haruki", "Mei", "Kaito", "Sakura", "Riku", 
+            "Hina", "Yuki", "Sora", "Ren", "Akira", "Yui", "Haruto", "Misaki", 
+            "Kazuki", "Nanami", "Sota", "Ayaka", "Daiki", "Rina", "Kenta", "Momoka",
+            "Hayato", "Yuna", "Ryota", "Aoi", "Hiroki", "Koharu", "Tsubasa", "Mio",
+            "Yamato", "Hinata", "Ryusei", "Yuka", "Koki", "Miyu", "Shota", "Nana",
+            "Keita", "Shiori", "Yusuke", "Ayumi", "Naoki", "Hana", "Tatsuya", "Risa",
+            "Kosuke", "Miku", "Daisuke", "Aya", "Takumi", "Natsuki", "Shun", "Kana",
+            "Yuya", "Reina", "Kazuya", "Mayu", "Kouki", "Akane", "Tomoya", "Sayaka",
+            "Ryosuke", "Haruna", "Shohei", "Mizuki", "Kenta", "Eri", "Naoto", "Moe",
+            "Takuya", "Ayano", "Yuto", "Chihiro", "Wataru", "Rika", "Kenji", "Asuka",
+            "Masaki", "Yui", "Kota", "Miki", "Yuuki", "Nozomi"
+        ];
+        
+        // DOM elements
+        const storySection = document.getElementById('story');
+        const trialSection = document.getElementById('trial');
+        const resultsSection = document.getElementById('results');
+        const startTrialBtn = document.getElementById('start-trial');
+        const continueOption = document.getElementById('continue-option');
+        const leaveOption = document.getElementById('leave-option');
+        const continueCount = document.getElementById('continue-count');
+        const leaveCount = document.getElementById('leave-count');
+        const voteBarContinue = document.getElementById('vote-bar-continue');
+        const voteBarLeave = document.getElementById('vote-bar-leave');
+        const votesCast = document.getElementById('votes-cast');
+        const timerElement = document.getElementById('timer');
+        const voteMessage = document.getElementById('vote-message');
+        const finalDecision = document.getElementById('final-decision');
+        const finalContinue = document.getElementById('final-continue');
+        const finalLeave = document.getElementById('final-leave');
+        const decisionText = document.getElementById('decision-text');
+        const outcomeText = document.getElementById('outcome-text');
+        const continueBtn = document.getElementById('continue-btn');
+        const voteActivityContainer = document.getElementById('vote-activity-container');
+        const voteActivityList = document.getElementById('vote-activity-list');
+        
+        // Start voting
+        startTrialBtn.addEventListener('click', function() {
+            storySection.classList.add('hidden');
+            trialSection.classList.remove('hidden');
+            startVoting();
+        });
+        
+        // Start voting
+        function startVoting() {
+            // Generate random voting pattern
+            generateVoteHistory();
+            
+            // Set up vote options
+            continueOption.addEventListener('click', () => castVote('continue'));
+            leaveOption.addEventListener('click', () => castVote('leave'));
+            
+            // Start timer
+            timerInterval = setInterval(function() {
+                timeLeft--;
+                updateTimer();
+                
+                // Process scheduled votes
+                processScheduledVotes();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    finishVoting();
+                }
+            }, 1000);
+            
+            // Set up final decision buttons
+            finalContinue.addEventListener('click', () => makeDecision('continue'));
+            finalLeave.addEventListener('click', () => makeDecision('leave'));
+        }
+        
+        // Generate vote history
+        function generateVoteHistory() {
+            voteHistory = [];
+            const remainingVoters = totalVoters - 1; // Excluding player
+            
+            // Determine if we'll have a tie
+            const willHaveTie = Math.random() > 0.5;
+            
+            let continueVotersCount, leaveVotersCount;
+            
+            if (willHaveTie) {
+                // If we'll have a tie, make sure the votes are equal
+                if (remainingVoters % 2 === 0) {
+                    continueVotersCount = remainingVoters / 2;
+                    leaveVotersCount = remainingVoters / 2;
+                } else {
+                    continueVotersCount = Math.floor(remainingVoters / 2);
+                    leaveVotersCount = Math.ceil(remainingVoters / 2);
+                }
+            } else {
+                // If no tie, create a clear winner
+                const continuePercentage = Math.random() * 0.4 + 0.3; // Between 30% and 70%
+                continueVotersCount = Math.floor(remainingVoters * continuePercentage);
+                leaveVotersCount = remainingVoters - continueVotersCount;
+            }
+            
+            // Create vote events spread throughout the time - much faster now
+            // Distribute votes across the 60 seconds
+            const usedTimePoints = new Set();
+            
+            // Helper function to get a random time point that hasn't been used
+            function getRandomTimePoint() {
+                let timePoint;
+                do {
+                    timePoint = Math.floor(Math.random() * 55) + 2; // Between 2s and 57s
+                } while (usedTimePoints.has(timePoint));
+                usedTimePoints.add(timePoint);
+                return timePoint;
+            }
+            
+            // Create batches of votes to make it more dynamic
+            const batchSize = 3; // Number of votes per second
+            const numBatches = Math.ceil((continueVotersCount + leaveVotersCount) / batchSize);
+            
+            let continueVotersLeft = continueVotersCount;
+            let leaveVotersLeft = leaveVotersCount;
+            
+            for (let i = 0; i < numBatches; i++) {
+                const timePoint = getRandomTimePoint();
+                
+                // Determine how many votes in this batch
+                const batchVotes = Math.min(batchSize, continueVotersLeft + leaveVotersLeft);
+                
+                for (let j = 0; j < batchVotes; j++) {
+                    // Determine if this vote is continue or leave
+                    let vote;
+                    if (continueVotersLeft === 0) {
+                        vote = 'leave';
+                        leaveVotersLeft--;
+                    } else if (leaveVotersLeft === 0) {
+                        vote = 'continue';
+                        continueVotersLeft--;
+                    } else {
+                        // Randomly choose based on remaining proportions
+                        const continueProb = continueVotersLeft / (continueVotersLeft + leaveVotersLeft);
+                        vote = Math.random() < continueProb ? 'continue' : 'leave';
+                        
+                        if (vote === 'continue') {
+                            continueVotersLeft--;
+                        } else {
+                            leaveVotersLeft--;
+                        }
+                    }
+                    
+                    // Add a small delay within the same second for each vote in the batch
+                    const microDelay = j * 0.2; // Small fraction of a second
+                    
+                    voteHistory.push({
+                        time: timePoint + microDelay,
+                        vote: vote,
+                        student: studentNames[Math.floor(Math.random() * studentNames.length)]
+                    });
+                }
+            }
+            
+            // Sort by time
+            voteHistory.sort((a, b) => a.time - b.time);
+        }
+        
+        // Process scheduled votes
+        function processScheduledVotes() {
+            const currentTime = 60 - timeLeft;
+            
+            // Get votes that should happen at this time
+            // We use a small tolerance to account for floating point time values
+            const currentVotes = voteHistory.filter(v => {
+                return v.time >= currentTime - 0.2 && v.time < currentTime + 0.8;
+            });
+            
+            if (currentVotes.length > 0) {
+                currentVotes.forEach(vote => {
+                    if (vote.vote === 'continue') {
+                        continueVotes++;
+                    } else {
+                        leaveVotes++;
+                    }
+                    
+                    // Show vote activity
+                    showVoteActivity(vote.student, vote.vote);
+                    
+                    updateVoteCounts();
+                });
+            }
+        }
+        
+        // Show vote activity
+        function showVoteActivity(student, vote) {
+            // Add to floating notifications
+            const voteActivity = document.createElement('div');
+            voteActivity.className = 'vote-activity';
+            voteActivity.textContent = `${student} voted to ${vote === 'continue' ? 'continue' : 'leave'}`;
+            voteActivityContainer.appendChild(voteActivity);
+            
+            // Remove after animation completes
+            setTimeout(() => {
+                voteActivity.remove();
+            }, 3000);
+            
+            // Add to activity list
+            const voteItem = document.createElement('div');
+            voteItem.className = `vote-activity-item ${vote}-vote`;
+            voteItem.textContent = `${student} voted to ${vote === 'continue' ? 'continue' : 'leave'}`;
+            voteActivityList.appendChild(voteItem);
+            
+            // Scroll to bottom
+            voteActivityList.scrollTop = voteActivityList.scrollHeight;
+            
+            // Keep only the last 20 items
+            while (voteActivityList.children.length > 20) {
+                voteActivityList.removeChild(voteActivityList.firstChild);
+            }
+        }
+        
+        // Cast vote
+        function castVote(vote) {
+            if (playerVoted || votingComplete) return;
+            
+            playerVoted = true;
+            playerVote = vote;
+            
+            if (vote === 'continue') {
+                continueOption.classList.add('selected');
+                continueVotes++;
+            } else {
+                leaveOption.classList.add('selected');
+                leaveVotes++;
+            }
+            
+            updateVoteCounts();
+            voteMessage.textContent = 'Your vote has been cast. Waiting for others to finish voting...';
+            voteMessage.style.color = '#22c55e';
+            
+            // Show your vote activity
+            showVoteActivity('You', vote);
+            
+            // If time is almost up, finish voting
+            if (timeLeft < 5) {
+                finishVoting();
+            }
+        }
+        
+        // Update vote counts
+        function updateVoteCounts() {
+            continueCount.textContent = continueVotes;
+            leaveCount.textContent = leaveVotes;
+            
+            const totalVotes = continueVotes + leaveVotes;
+            votesCast.textContent = `${totalVotes}/${totalVoters}`;
+            
+            // Update visualization
+            const continuePercentage = (continueVotes / totalVoters) * 100;
+            const leavePercentage = (leaveVotes / totalVoters) * 100;
+            
+            voteBarContinue.style.width = `${continuePercentage}%`;
+            voteBarLeave.style.width = `${leavePercentage}%`;
+        }
+        
+        // Format time as MM:SS
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        // Update timer
+        function updateTimer() {
+            timerElement.textContent = formatTime(timeLeft);
+            
+            // Change color when time is running low
+            if (timeLeft <= 10) {
+                timerElement.style.color = '#ef4444';
+            } else {
+                timerElement.style.color = '#22c55e';
+            }
+        }
+        
+        // Finish voting
+        function finishVoting() {
+            votingComplete = true;
+            clearInterval(timerInterval);
+            
+            // Check if tied
+            if (continueVotes === leaveVotes) {
+                // Show final decision dialog
+                finalDecision.style.display = 'flex';
+            } else if (!playerVoted) {
+                // If player hasn't voted, force them to vote
+                finalDecision.querySelector('.decision-title').textContent = "Time's Up";
+                finalDecision.querySelector('.decision-text').textContent = 
+                    "You haven't cast your vote yet. As time has run out, your decision will determine the outcome.";
+                finalDecision.style.display = 'flex';
+            } else {
+                // Determine outcome
+                const finalDecision = continueVotes > leaveVotes ? 'continue' : 'leave';
+                showResults(finalDecision);
+            }
+        }
+        
+        // Make final decision
+        function makeDecision(decision) {
+            finalDecision.style.display = 'none';
+            showResults(decision);
+        }
+        
+        // Show results
+        function showResults(decision) {
+            trialSection.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+            
+            if (decision === 'continue') {
+                decisionText.textContent = 'Decision: CONTINUE THE TRIALS';
+                outcomeText.textContent = 'The trials will continue. The path to victory narrows further.';
+                continueBtn.textContent = 'CONTINUE TO CHAPTER 6';
+                continueBtn.onclick = function() {
+                    window.location.href = 'chaptersix.html';
+                };
+            } else {
+                decisionText.textContent = 'Decision: LEAVE THE FACILITY';
+                outcomeText.textContent = "You've chosen to leave. But will the organizers honor their promise?";
+                continueBtn.textContent = 'PROCEED TO ENDING';
+                continueBtn.onclick = function() {
+                    window.location.href = 'specialfailure.html';
+                };
+            }
+        }
+
+        // For testing/demo purposes - speed up the timer even more
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'f' && e.ctrlKey) {
+                timeLeft = Math.min(timeLeft, 5);
+                updateTimer();
+            }
+        });
+    </script>
+</body>
+</html>
